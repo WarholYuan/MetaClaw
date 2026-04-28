@@ -1,0 +1,12 @@
+data/
+tmp/
+web-articles/
+run.log
+*.log
+*.pid
+nohup.out
+memory/long-term/*.db-shm
+memory/long-term/*.db-wal
+.DS_Store
+__pycache__/
+*.pyc

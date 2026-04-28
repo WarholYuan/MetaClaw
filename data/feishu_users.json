@@ -1,0 +1,12 @@
+{
+  "ou_f29c989fcd7bdc41851c87c2ef81820e": {
+    "open_id": "ou_f29c989fcd7bdc41851c87c2ef81820e",
+    "name": "墨叹奈何",
+    "permission": "admin",
+    "allowed_skills": [
+      "*"
+    ],
+    "created_at": 1777350475,
+    "last_seen": 1777350475
+  }
+}
