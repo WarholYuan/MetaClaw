@@ -2,7 +2,7 @@
   "ou_f29c989fcd7bdc41851c87c2ef81820e": {
     "open_id": "ou_f29c989fcd7bdc41851c87c2ef81820e",
     "name": "墨叹奈何",
-    "permission": "admin",
+    "permission": "user",
     "allowed_skills": [
       "*"
     ],

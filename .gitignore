@@ -2,3 +2,16 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Runtime data
+logs/*
+memory/*.md
+memory/long-term/*.db
+memory/long-term/*.db-shm
+memory/long-term/*.db-wal
+data/*.pkl
+tmp/*.md
+
+# Claude runtime
+.claude/skills/
+
