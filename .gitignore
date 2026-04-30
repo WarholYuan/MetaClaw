@@ -5,6 +5,7 @@ __pycache__/
 
 # Runtime data
 logs/*
+metaclaw/logs/*
 memory/*.md
 memory/long-term/*.db
 memory/long-term/*.db-shm
@@ -14,3 +15,6 @@ tmp/*
 
 # Claude runtime
 .claude/skills/
+metaclaw/config.json
+config.json
+.claude/

@@ -1,0 +1,30 @@
+{
+  "name": "@mianhuatang/metaclaw",
+  "version": "0.1.0",
+  "description": "Installer wrapper for MetaClaw",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mianhuatang/MetaClaw.git"
+  },
+  "homepage": "https://github.com/mianhuatang/MetaClaw#readme",
+  "bugs": {
+    "url": "https://github.com/mianhuatang/MetaClaw/issues"
+  },
+  "bin": {
+    "metaclaw-install": "npm/bin/metaclaw-install.js"
+  },
+  "files": [
+    "npm/bin/metaclaw-install.js",
+    "scripts/install.sh",
+    "README.md",
+    "INSTALL.md"
+  ],
+  "scripts": {
+    "install:local": "bash scripts/install.sh",
+    "test": "node --test skills/web-access/tests/find-url.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
