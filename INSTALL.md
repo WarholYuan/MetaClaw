@@ -5,14 +5,14 @@ MetaClaw is a Python application. The npm package is only a thin installer wrapp
 ## curl
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 Custom repo, branch, and install paths:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash -s -- \
-  --repo https://github.com/mianhuatang/MetaClaw.git \
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash -s -- \
+  --repo https://github.com/WarholYuan/metaclaw-installer.git \
   --branch main \
   --dir "$HOME/.metaclaw/src" \
   --workspace "$HOME/.metaclaw/workspace"
@@ -21,7 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/i
 Install browser support too:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash -s -- --browser
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash -s -- --browser
 ```
 
 ## npm
@@ -29,19 +29,19 @@ curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/i
 From npm after publishing:
 
 ```bash
-npx @mianhuatang/metaclaw
+npx @mianhuatang913/metaclaw
 ```
 
 From GitHub before npm publishing:
 
 ```bash
-npx github:mianhuatang/MetaClaw
+npx github:WarholYuan/metaclaw-installer
 ```
 
 Pass installer options after `--`:
 
 ```bash
-npx @mianhuatang/metaclaw -- --branch main --browser
+npx @mianhuatang913/metaclaw -- --branch main --browser
 ```
 
 ## Updates
@@ -49,13 +49,13 @@ npx @mianhuatang/metaclaw -- --branch main --browser
 Users can update by running either installer command again:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 or:
 
 ```bash
-npx @mianhuatang/metaclaw
+npx @mianhuatang913/metaclaw
 ```
 
 The installer also creates a local update command:
@@ -99,7 +99,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ## Publisher Checklist
 
-Before publishing, replace `mianhuatang/MetaClaw` in these files if your GitHub repo path is different:
+Before publishing, replace `WarholYuan/metaclaw-installer` in these files if your GitHub repo path is different:
 
 - `scripts/install.sh`
 - `INSTALL.md`

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO_URL="https://github.com/mianhuatang/MetaClaw.git"
+DEFAULT_REPO_URL="https://github.com/WarholYuan/metaclaw-installer.git"
 REPO_URL="${METACLAW_REPO_URL:-$DEFAULT_REPO_URL}"
 BRANCH="${METACLAW_BRANCH:-main}"
 INSTALL_DIR="${METACLAW_INSTALL_DIR:-$HOME/.metaclaw/src}"

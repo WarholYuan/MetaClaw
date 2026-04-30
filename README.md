@@ -9,7 +9,7 @@ MetaClaw itself is a Python application. The npm package is a thin installer wra
 ### curl
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 ### npm
@@ -17,13 +17,13 @@ curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/i
 After the npm package is published:
 
 ```bash
-npx @mianhuatang/metaclaw
+npx @mianhuatang913/metaclaw
 ```
 
 Before npm publishing, install from GitHub:
 
 ```bash
-npx github:mianhuatang/MetaClaw
+npx github:WarholYuan/metaclaw-installer
 ```
 
 ## Update
@@ -37,7 +37,7 @@ metaclaw-update
 Or run the installer again:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 The updater pulls the latest Git commit, updates submodules, and reinstalls the Python package into the existing virtual environment.
@@ -70,7 +70,7 @@ metaclaw-update
 ## Custom Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash -s -- \
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash -s -- \
   --branch main \
   --dir "$HOME/.metaclaw/src" \
   --workspace "$HOME/.metaclaw/workspace" \

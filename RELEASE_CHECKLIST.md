@@ -33,7 +33,7 @@ data/*.pkl
 当前安装器默认地址是：
 
 ```text
-https://github.com/mianhuatang/MetaClaw.git
+https://github.com/WarholYuan/metaclaw-installer.git
 ```
 
 如果你的真实仓库不是这个地址，需要改这些文件：
@@ -48,7 +48,7 @@ package.json
 搜索命令：
 
 ```bash
-rg "mianhuatang/MetaClaw|@mianhuatang/metaclaw"
+rg "WarholYuan/metaclaw-installer|@mianhuatang913/metaclaw"
 ```
 
 ## 3. 发布 GitHub
@@ -56,7 +56,7 @@ rg "mianhuatang/MetaClaw|@mianhuatang/metaclaw"
 如果还没有 remote：
 
 ```bash
-git remote add origin https://github.com/mianhuatang/MetaClaw.git
+git remote add origin https://github.com/WarholYuan/metaclaw-installer.git
 ```
 
 因为历史已经重写过，首次推送或覆盖旧仓库需要 force：
@@ -84,7 +84,7 @@ git status
 在一个临时目录或测试机器上跑：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 安装成功后验证：
@@ -111,7 +111,7 @@ npm login
 确认包名还可用：
 
 ```bash
-npm view @mianhuatang/metaclaw
+npm view @mianhuatang913/metaclaw
 ```
 
 如果显示 404，说明未发布，可以继续。
@@ -125,13 +125,13 @@ npm publish --access public
 发布后验证：
 
 ```bash
-npx @mianhuatang/metaclaw -- --help
+npx @mianhuatang913/metaclaw -- --help
 ```
 
 真正安装测试：
 
 ```bash
-npx @mianhuatang/metaclaw
+npx @mianhuatang913/metaclaw
 ```
 
 ## 6. 用户安装命令
@@ -139,19 +139,19 @@ npx @mianhuatang/metaclaw
 curl：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mianhuatang/MetaClaw/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/WarholYuan/metaclaw-installer/main/scripts/install.sh | bash
 ```
 
 npm：
 
 ```bash
-npx @mianhuatang/metaclaw
+npx @mianhuatang913/metaclaw
 ```
 
 GitHub npm 方式，适合 npm 包发布前测试：
 
 ```bash
-npx github:mianhuatang/MetaClaw
+npx github:WarholYuan/metaclaw-installer
 ```
 
 ## 7. 用户更新命令
