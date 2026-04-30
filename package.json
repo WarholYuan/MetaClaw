@@ -1,6 +1,6 @@
 {
   "name": "@mianhuatang913/metaclaw",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Installer wrapper for MetaClaw",
   "license": "MIT",
   "repository": {
@@ -12,6 +12,7 @@
     "url": "https://github.com/WarholYuan/metaclaw-installer/issues"
   },
   "bin": {
+    "metaclaw": "npm/bin/metaclaw-install.js",
     "metaclaw-install": "npm/bin/metaclaw-install.js"
   },
   "files": [
