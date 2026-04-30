@@ -10,8 +10,7 @@ memory/long-term/*.db
 memory/long-term/*.db-shm
 memory/long-term/*.db-wal
 data/*.pkl
-tmp/*.md
+tmp/*
 
 # Claude runtime
 .claude/skills/
-
