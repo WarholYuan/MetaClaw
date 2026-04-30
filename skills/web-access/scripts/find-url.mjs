@@ -24,7 +24,7 @@ import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 
 // --- 参数解析 -----------------------------------------------------------
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const a = { keywords: [], only: null, limit: 20, since: null, sort: 'recent' };
   for (let i = 0; i < argv.length; i++) {
     const v = argv[i];
@@ -60,7 +60,7 @@ function parseArgs(argv) {
   return a;
 }
 
-function parseSince(s) {
+export function parseSince(s) {
   const m = s.match(/^(\d+)([dhm])$/);
   if (m) {
     const n = parseInt(m[1], 10);
@@ -74,8 +74,17 @@ function parseSince(s) {
   die(`无效 --since 值: ${s}（用 1d / 7h / 30m / YYYY-MM-DD）`);
 }
 
-function die(msg) { console.error('Error: ' + msg); process.exit(1); }
-function printUsage() {
+function die(msg) { throw new CliError(msg); }
+
+class CliError extends Error {
+  constructor(message, exitCode = 1) {
+    super(message);
+    this.name = 'CliError';
+    this.exitCode = exitCode;
+  }
+}
+
+export function getUsage() {
   const lines = fs.readFileSync(new URL(import.meta.url), 'utf8').split('\n');
   const usageLines = [];
   let started = false;
@@ -85,7 +94,11 @@ function printUsage() {
     started = true;
     usageLines.push(line.replace(/^\/\/ ?/, ''));
   }
-  console.error(usageLines.join('\n'));
+  return usageLines.join('\n');
+}
+
+function printUsage() {
+  console.error(getUsage());
 }
 
 // --- Chrome 用户数据目录（跨平台） ---------------------------------------
@@ -202,8 +215,9 @@ console.log(' ' + segs.join(' | '));
 }
 }
 
+export function main(argv = process.argv.slice(2)) {
 // --- main ---------------------------------------------------------------
-const args = parseArgs(process.argv.slice(2));
+const args = parseArgs(argv);
 
 const dataDir = getChromeDataDir();
 if (!dataDir || !fs.existsSync(dataDir)) die('未找到 Chrome 用户数据目录');
@@ -241,4 +255,17 @@ if (doHistory) printHistory(historyOut, showProfile, sortLabel);
 
 if (!args.keywords.length && doBookmarks && !doHistory) {
 console.error('\n提示：书签无时间维度，无关键词查询无意义。加关键词或切换 --only history。');
+}
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  try {
+    main();
+  } catch (e) {
+    if (e instanceof CliError) {
+      console.error('Error: ' + e.message);
+      process.exit(e.exitCode);
+    }
+    throw e;
+  }
 }
