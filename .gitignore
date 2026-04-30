@@ -18,3 +18,9 @@ tmp/*
 metaclaw/config.json
 config.json
 .claude/
+
+# Local workspace data
+/data/
+/memory/
+/reports/
+/knowledge/
