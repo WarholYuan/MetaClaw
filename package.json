@@ -33,6 +33,7 @@
   "scripts": {
     "install:local": "bash scripts/install.sh",
     "test": "node --test skills/web-access/tests/find-url.test.mjs npm/bin/metaclaw-install.test.mjs",
+    "test:coverage": "c8 npm test",
     "test:bats": "bats tests/install.bats",
     "lint:sh": "shellcheck scripts/install.sh",
     "lint:js": "node --check npm/bin/metaclaw-install.js",
@@ -45,6 +46,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "c8": "^11.0.0",
     "standard-version": "^9.5.0"
   }
 }
