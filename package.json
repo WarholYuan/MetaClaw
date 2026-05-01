@@ -35,9 +35,16 @@
     "test": "node --test skills/web-access/tests/find-url.test.mjs npm/bin/metaclaw-install.test.mjs",
     "test:bats": "bats tests/install.bats",
     "lint:sh": "shellcheck scripts/install.sh",
-    "lint:js": "node --check npm/bin/metaclaw-install.js"
+    "lint:js": "node --check npm/bin/metaclaw-install.js",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:major": "standard-version --release-as major"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   }
 }
