@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging helpers
+log_info() { echo -e "${BLUE}ℹ${NC}  $*"; }
+log_success() { echo -e "${GREEN}✔${NC}  $*"; }
+log_warn() { echo -e "${YELLOW}⚠${NC}  $*"; }
+log_error() { echo -e "${RED}✖${NC}  $*" >&2; }
+
 DEFAULT_REPO_URL="https://github.com/WarholYuan/metaclaw-installer.git"
 REPO_URL="${METACLAW_REPO_URL:-$DEFAULT_REPO_URL}"
 BRANCH="${METACLAW_BRANCH:-main}"
@@ -11,6 +24,22 @@ BIN_DIR="${METACLAW_BIN_DIR:-$HOME/.local/bin}"
 INSTALL_BROWSER="${METACLAW_INSTALL_BROWSER:-0}"
 DEV_INSTALL="${METACLAW_DEV_INSTALL:-0}"
 CREATE_SHIMS="${METACLAW_CREATE_SHIMS:-1}"
+
+# Error handling
+cleanup_on_error() {
+  local exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+    log_error "Installation failed with exit code $exit_code"
+    log_info "If you need help, please open an issue at:"
+    log_info "  https://github.com/WarholYuan/metaclaw-installer/issues"
+    log_info "Include the following information:"
+    log_info "  OS: $(uname -s)"
+    log_info "  Shell: $SHELL"
+    log_info "  Python: $(python3 --version 2>/dev/null || echo 'not found')"
+    log_info "  Git: $(git --version 2>/dev/null || echo 'not found')"
+  fi
+}
+trap cleanup_on_error EXIT
 
 usage() {
   cat <<USAGE
@@ -56,52 +85,76 @@ done
 
 need_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
-    echo "Missing required command: $1" >&2
+    log_error "Missing required command: $1"
+    log_info "Please install $1 and try again."
     exit 1
   fi
 }
 
+log_info "Checking prerequisites..."
 need_cmd git
 need_cmd python3
+log_success "git and python3 are available"
 
+log_info "Preparing directories..."
 mkdir -p "$(dirname "$INSTALL_DIR")" "$WORKSPACE_DIR" "$HOME/.metaclaw"
+log_success "Directories ready"
 
+STEP=0
+TOTAL_STEPS=7
+
+step() {
+  STEP=$((STEP + 1))
+  log_info "[$STEP/$TOTAL_STEPS] $*"
+}
+
+step "Checking source code..."
 if [[ -d "$INSTALL_DIR/.git" ]]; then
-  echo "Updating MetaClaw source in $INSTALL_DIR"
+  log_info "Updating MetaClaw source in $INSTALL_DIR"
   git -C "$INSTALL_DIR" fetch --tags origin
   git -C "$INSTALL_DIR" checkout "$BRANCH"
   git -C "$INSTALL_DIR" pull --ff-only origin "$BRANCH"
+  log_success "Source updated"
 else
   if [[ -e "$INSTALL_DIR" ]]; then
-    echo "Install directory exists but is not a git checkout: $INSTALL_DIR" >&2
+    log_error "Install directory exists but is not a git checkout: $INSTALL_DIR"
+    log_info "Remove it or use --dir to choose a different location"
     exit 1
   fi
-  echo "Cloning MetaClaw from $REPO_URL to $INSTALL_DIR"
+  log_info "Cloning MetaClaw from $REPO_URL to $INSTALL_DIR"
   git clone --recursive --branch "$BRANCH" "$REPO_URL" "$INSTALL_DIR"
+  log_success "Source cloned"
 fi
 
+step "Updating submodules..."
 if [[ -f "$INSTALL_DIR/.gitmodules" ]]; then
   git -C "$INSTALL_DIR" submodule update --init --recursive
+  log_success "Submodules updated"
 else
-  echo "No .gitmodules found. The repository must include the MetaClaw Python source or a valid submodule mapping." >&2
+  log_error "No .gitmodules found. The repository must include the MetaClaw Python source or a valid submodule mapping."
   exit 1
 fi
 
+step "Locating Python project..."
 PROJECT_DIR="$INSTALL_DIR/metaclaw/metaclaw"
 if [[ ! -f "$PROJECT_DIR/pyproject.toml" ]]; then
   if [[ -f "$INSTALL_DIR/pyproject.toml" ]]; then
     PROJECT_DIR="$INSTALL_DIR"
   else
-    echo "Could not find MetaClaw Python project under $INSTALL_DIR" >&2
+    log_error "Could not find MetaClaw Python project under $INSTALL_DIR"
     exit 1
   fi
 fi
+log_success "Found project at $PROJECT_DIR"
 
-echo "Creating virtual environment: $VENV_DIR"
+step "Creating Python virtual environment..."
 python3 -m venv "$VENV_DIR"
+log_success "Virtual environment created at $VENV_DIR"
+
 # shellcheck disable=SC1091
 source "$VENV_DIR/bin/activate"
 
+log_info "Installing Python dependencies..."
 python -m pip install --upgrade pip setuptools wheel
 if [[ "$DEV_INSTALL" == "1" ]]; then
   # shellcheck disable=SC1087
@@ -109,22 +162,32 @@ if [[ "$DEV_INSTALL" == "1" ]]; then
 else
   python -m pip install -e "$PROJECT_DIR"
 fi
+log_success "Python dependencies installed"
 
+step "Configuring workspace..."
 CONFIG_FILE="$WORKSPACE_DIR/config.json"
 LEGACY_CONFIG_FILE="$PROJECT_DIR/config.json"
 if [[ ! -f "$CONFIG_FILE" ]]; then
   if [[ -f "$LEGACY_CONFIG_FILE" ]]; then
     cp "$LEGACY_CONFIG_FILE" "$CONFIG_FILE"
+    log_success "Migrated legacy config to workspace"
   elif [[ -f "$PROJECT_DIR/config-template.json" ]]; then
     cp "$PROJECT_DIR/config-template.json" "$CONFIG_FILE"
+    log_success "Created config from template"
   fi
+else
+  log_success "Config already exists in workspace"
 fi
 export METACLAW_CONFIG_FILE="$CONFIG_FILE"
 
+step "Installing optional components..."
 if [[ "$INSTALL_BROWSER" == "1" ]]; then
+  log_info "Installing browser tool..."
   metaclaw install-browser
+  log_success "Browser tool installed"
 fi
 
+step "Saving installation settings..."
 cat > "$HOME/.metaclaw/install.env" <<ENV
 METACLAW_REPO_URL='$REPO_URL'
 METACLAW_BRANCH='$BRANCH'
@@ -136,7 +199,9 @@ METACLAW_INSTALL_BROWSER='$INSTALL_BROWSER'
 METACLAW_DEV_INSTALL='$DEV_INSTALL'
 METACLAW_CREATE_SHIMS='$CREATE_SHIMS'
 ENV
+log_success "Settings saved"
 
+step "Creating CLI commands..."
 if [[ "$CREATE_SHIMS" == "1" ]]; then
   mkdir -p "$BIN_DIR"
   cat > "$BIN_DIR/metaclaw" <<SHIM
@@ -156,27 +221,36 @@ fi
 exec bash "$INSTALL_DIR/scripts/install.sh" "\$@"
 SHIM
   chmod +x "$BIN_DIR/metaclaw-update"
+  log_success "CLI commands created in $BIN_DIR"
+else
+  log_warn "Skipped CLI shim creation (--no-shims)"
 fi
+
+log_success "Installation complete!"
 
 cat <<DONE
 
-MetaClaw installed.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅ MetaClaw installed successfully!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Source:    $INSTALL_DIR
-Project:   $PROJECT_DIR
-Workspace: $WORKSPACE_DIR
-Venv:      $VENV_DIR
-Bin dir:   $BIN_DIR
+📁 Source:    $INSTALL_DIR
+📦 Project:   $PROJECT_DIR
+💾 Workspace: $WORKSPACE_DIR
+🐍 Venv:      $VENV_DIR
+🔗 Bin dir:   $BIN_DIR
 
-Next steps:
-  metaclaw help
-  metaclaw start
-  metaclaw-update
+🚀 Quick start:
+  metaclaw help      # Show help
+  metaclaw start     # Start MetaClaw
+  metaclaw-update    # Update to latest
 
-To configure runtime data/workspace, edit:
+⚙️  Configuration:
   $CONFIG_FILE
 
-If 'metaclaw' is not found, add this to your shell profile:
+💡 Tip: If 'metaclaw' is not found, add to your shell profile:
   export PATH="$BIN_DIR:\$PATH"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 DONE
