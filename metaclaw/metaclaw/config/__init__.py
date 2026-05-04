@@ -286,7 +286,7 @@ def load_config():
         config["weixin_credentials_path"] = DEFAULT_WEIXIN_CREDENTIALS_PATH
     if config.get("agent_workspace") == "~/metaclaw":
         config["agent_workspace"] = DEFAULT_AGENT_WORKSPACE
-    if config.get("appdata_dir") == "":
+    if config.get("appdata_dir") in ("", "~/metaclaw/data"):
         config["appdata_dir"] = DEFAULT_APPDATA_DIR
     if config.get("weixin_credentials_path") == "~/.weixin_metaclaw_credentials.json":
         config["weixin_credentials_path"] = DEFAULT_WEIXIN_CREDENTIALS_PATH

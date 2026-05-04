@@ -8,6 +8,7 @@ from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from common.log import logger
 from plugins import *
+from plugins.plugin import get_plugin_config_path
 
 from .lib.WordsSearch import WordsSearch
 
@@ -29,7 +30,7 @@ class Banwords(Plugin):
             curdir = os.path.dirname(__file__)
             if not conf:
                 # 配置不存在则写入默认配置
-                config_path = os.path.join(curdir, "config.json")
+                config_path = get_plugin_config_path(self.name)
                 if not os.path.exists(config_path):
                     conf = {"action": "ignore"}
                     with open(config_path, "w") as f:
@@ -38,6 +39,8 @@ class Banwords(Plugin):
             self.searchr = WordsSearch()
             self.action = conf["action"]
             banwords_path = os.path.join(curdir, "banwords.txt")
+            if not os.path.exists(banwords_path):
+                banwords_path = os.path.join(curdir, "banwords.txt.template")
             with open(banwords_path, "r", encoding="utf-8") as f:
                 words = []
                 for line in f:

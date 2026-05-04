@@ -15,6 +15,7 @@ from bridge.reply import Reply, ReplyType
 from common import const
 from config import conf, load_config, global_config
 from plugins import *
+from plugins.plugin import get_plugin_config_path
 
 # 定义指令集
 COMMANDS = {
@@ -184,7 +185,7 @@ class Godcmd(Plugin):
     def __init__(self):
         super().__init__()
 
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
+        config_path = get_plugin_config_path(self.name)
         gconf = super().load_config()
         if not gconf:
             if not os.path.exists(config_path):

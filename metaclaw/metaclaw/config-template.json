@@ -41,7 +41,7 @@
   "web_password": "",
   "agent": true,
   "agent_workspace": "~/.metaclaw/workspace",
-  "appdata_dir": "~/metaclaw/data",
+  "appdata_dir": "~/.metaclaw/workspace/data",
   "agent_max_context_tokens": 50000,
   "agent_max_context_turns": 20,
   "agent_max_steps": 20,

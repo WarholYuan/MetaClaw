@@ -1,5 +1,9 @@
 """CLI entry point."""
 
+import os
+import subprocess
+import sys
+
 import click
 from cli import __version__
 from cli.commands.skill import skill
@@ -26,6 +30,7 @@ Commands:
   status   Show {APP_NAME} running status.
   logs     View {APP_NAME} logs.
   doctor   Manage Metadoctor (health monitor).
+  setup    Run the interactive configuration wizard.
   skill    Manage {APP_NAME} skills.
   knowledge  Manage knowledge base.
   lark     Feishu (Lark) operations via lark-cli.
@@ -68,6 +73,17 @@ def help_cmd(ctx):
     click.echo(HELP_TEXT.strip())
 
 
+@main.command()
+def setup():
+    """Run the interactive configuration wizard."""
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    repo_root = os.path.abspath(os.path.join(project_root, os.pardir, os.pardir))
+    script = os.path.join(repo_root, "scripts", "setup.sh")
+    if not os.path.exists(script):
+        raise click.ClickException(f"setup script not found: {script}")
+    raise SystemExit(subprocess.call(["bash", script], env=os.environ.copy()))
+
+
 main.add_command(skill)
 main.add_command(start)
 main.add_command(stop)
@@ -80,6 +96,7 @@ main.add_command(knowledge)
 main.add_command(lark)
 main.add_command(doctor_group)
 main.add_command(install_browser)
+main.add_command(setup)
 
 
 if __name__ == '__main__':

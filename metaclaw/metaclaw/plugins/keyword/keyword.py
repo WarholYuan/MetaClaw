@@ -8,6 +8,7 @@ from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from common.log import logger
 from plugins import *
+from plugins.plugin import get_plugin_config_path
 
 
 @plugins.register(
@@ -22,8 +23,7 @@ class Keyword(Plugin):
     def __init__(self):
         super().__init__()
         try:
-            curdir = os.path.dirname(__file__)
-            config_path = os.path.join(curdir, "config.json")
+            config_path = get_plugin_config_path(self.name)
             conf = None
             if not os.path.exists(config_path):
                 logger.debug(f"[keyword]不存在配置文件{config_path}")

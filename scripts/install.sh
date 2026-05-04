@@ -101,7 +101,7 @@ mkdir -p "$(dirname "$INSTALL_DIR")" "$WORKSPACE_DIR" "$HOME/.metaclaw"
 log_success "Directories ready"
 
 STEP=0
-TOTAL_STEPS=7
+TOTAL_STEPS=8
 
 step() {
   STEP=$((STEP + 1))

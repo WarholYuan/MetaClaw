@@ -7,8 +7,10 @@ import os
 import sys
 
 from common.log import logger
+from common.brand import DEFAULT_AGENT_WORKSPACE
 from common.singleton import singleton
 from common.sorted_dict import SortedDict
+from common.utils import expand_path
 from config import conf, remove_plugin_config, write_plugin_config
 
 from .event import *
@@ -45,7 +47,7 @@ class PluginManager:
         return wrapper
 
     def save_config(self):
-        config_path = os.path.join(self.plugins_dir, "plugins.json")
+        config_path = self.get_config_path("plugins.json")
         with open(config_path, "w", encoding="utf-8") as f:
             json.dump(self.pconf, f, indent=4, ensure_ascii=False)
 
@@ -53,7 +55,7 @@ class PluginManager:
         logger.debug("Loading plugins config...")
 
         modified = False
-        config_path = os.path.join(self.plugins_dir, "plugins.json")
+        config_path = self.get_config_path("plugins.json")
         if os.path.exists(config_path):
             with open(config_path, "r", encoding="utf-8") as f:
                 pconf = json.load(f)
@@ -66,6 +68,15 @@ class PluginManager:
             self.save_config()
         return pconf
 
+    def get_config_dir(self):
+        workspace = expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE))
+        config_dir = os.path.join(workspace, "plugin-configs")
+        os.makedirs(config_dir, exist_ok=True)
+        return config_dir
+
+    def get_config_path(self, name: str):
+        return os.path.join(self.get_config_dir(), name)
+
     @staticmethod
     def _load_all_config():
         """
@@ -75,7 +86,7 @@ class PluginManager:
         从 plugins/config.json 中加载所有插件的配置并写入 config.py 的全局配置中，供插件中使用
         插件实例中通过 config.pconf(plugin_name) 即可获取该插件的配置
         """
-        all_config_path = os.path.join(PluginManager().plugins_dir, "config.json")
+        all_config_path = PluginManager().get_config_path("config.json")
         try:
             if os.path.exists(all_config_path):
                 # read from all plugins config
