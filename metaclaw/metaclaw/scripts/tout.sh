@@ -5,7 +5,7 @@ cd `dirname $0`/..
 export BASE_DIR=`pwd`
 echo $BASE_DIR
 
-WORKSPACE_DIR="${METACLAW_WORKSPACE:-$HOME/metaclaw}"
+WORKSPACE_DIR="${METACLAW_WORKSPACE:-$HOME/.metaclaw/workspace}"
 LOG_FILE="${WORKSPACE_DIR}/logs/nohup.out"
 
 if [ ! -f "${LOG_FILE}" ]; then

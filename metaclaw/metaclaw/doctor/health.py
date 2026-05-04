@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from common.log import logger
+from common.brand import DEFAULT_AGENT_WORKSPACE
 
 
 @dataclass
@@ -28,8 +29,8 @@ class HealthReport:
 class HealthChecker:
     """Check MetaClaw health from process and log files."""
 
-    PID_FILE = os.path.expanduser("~/metaclaw/logs/.metaclaw.pid")
-    RUN_LOG = os.path.expanduser("~/metaclaw/logs/run.log")
+    PID_FILE = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", ".metaclaw.pid"))
+    RUN_LOG = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", "run.log"))
 
     def __init__(self):
         self._last_report: Optional[HealthReport] = None

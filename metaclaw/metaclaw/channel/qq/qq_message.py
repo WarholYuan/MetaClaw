@@ -4,13 +4,14 @@ import requests
 from bridge.context import ContextType
 from channel.chat_message import ChatMessage
 from common.log import logger
+from common.brand import DEFAULT_AGENT_WORKSPACE
 from common.utils import expand_path
 from config import conf
 
 
 def _get_tmp_dir() -> str:
     """Return the workspace tmp directory (absolute path), creating it if needed."""
-    ws_root = expand_path(conf().get("agent_workspace", "~/metaclaw"))
+    ws_root = expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE))
     tmp_dir = os.path.join(ws_root, "tmp")
     os.makedirs(tmp_dir, exist_ok=True)
     return tmp_dir

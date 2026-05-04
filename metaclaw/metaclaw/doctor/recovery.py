@@ -65,7 +65,8 @@ class RecoveryManager:
 
     def get_last_logs(self, n: int = 20) -> str:
         """Return the last N lines of the run log."""
-        log_path = os.path.expanduser("~/metaclaw/logs/run.log")
+        from common.brand import DEFAULT_AGENT_WORKSPACE
+        log_path = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", "run.log"))
         if not os.path.exists(log_path):
             return f"Log file not found: {log_path}"
         try:

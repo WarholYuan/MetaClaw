@@ -13,8 +13,10 @@ from common.brand import APP_NAME
 _IS_WIN = sys.platform == "win32"
 
 # Same path pattern as main process PID file
-_DOCTOR_PID_FILE = os.path.expanduser("~/metaclaw/logs/.metadoctor.pid")
-_DOCTOR_LOG_FILE = os.path.expanduser("~/metaclaw/logs/metadoctor.log")
+from common.brand import DEFAULT_AGENT_WORKSPACE
+
+_DOCTOR_PID_FILE = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", ".metadoctor.pid"))
+_DOCTOR_LOG_FILE = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", "metadoctor.log"))
 
 
 def _read_pid():

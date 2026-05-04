@@ -79,7 +79,7 @@ Metadoctor 需要知道把告警发给哪个用户。获取你的 open_id：
 metaclaw doctor start
 ```
 
-后台启动守护进程，日志写入 `~/metaclaw/logs/metadoctor.log`。
+后台启动守护进程，日志写入 `~/.metaclaw/workspace/logs/metadoctor.log`。
 
 前台启动（调试用）：
 
@@ -190,6 +190,6 @@ pip install lark-oapi
 
 | 文件 | 路径 |
 |------|------|
-| PID 文件 | `~/metaclaw/logs/.metadoctor.pid` |
-| 日志文件 | `~/metaclaw/logs/metadoctor.log` |
+| PID 文件 | `~/.metaclaw/workspace/logs/.metadoctor.pid` |
+| 日志文件 | `~/.metaclaw/workspace/logs/metadoctor.log` |
 | 配置文件 | `~/metaclaw/config.json` |

@@ -15,7 +15,7 @@ import sys
 import threading
 import time
 
-from common.brand import APP_NAME
+from common.brand import APP_NAME, DEFAULT_AGENT_WORKSPACE
 from common.log import logger
 from config import conf
 from doctor.feishu_client import MetadoctorFeishuClient
@@ -29,8 +29,8 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 # File paths (mirroring process.py pattern)
-PID_FILE = os.path.expanduser("~/metaclaw/logs/.metadoctor.pid")
-LOG_FILE = os.path.expanduser("~/metaclaw/logs/metadoctor.log")
+PID_FILE = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", ".metadoctor.pid"))
+LOG_FILE = os.path.expanduser(os.path.join(DEFAULT_AGENT_WORKSPACE, "logs", "metadoctor.log"))
 
 
 class Metadoctor:

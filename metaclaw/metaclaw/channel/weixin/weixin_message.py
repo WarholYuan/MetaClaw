@@ -11,6 +11,7 @@ from bridge.context import ContextType
 from channel.chat_message import ChatMessage
 from channel.weixin.weixin_api import download_media_from_cdn, CDN_BASE_URL
 from common.log import logger
+from common.brand import DEFAULT_AGENT_WORKSPACE
 from common.utils import expand_path
 from config import conf
 
@@ -24,7 +25,7 @@ ITEM_VIDEO = 5
 
 
 def _get_tmp_dir() -> str:
-    ws_root = expand_path(conf().get("agent_workspace", "~/metaclaw"))
+    ws_root = expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE))
     tmp_dir = os.path.join(ws_root, "tmp")
     os.makedirs(tmp_dir, exist_ok=True)
     return tmp_dir

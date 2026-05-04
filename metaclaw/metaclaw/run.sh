@@ -51,7 +51,7 @@ fi
 
 # Get current script directory
 export BASE_DIR=$(cd "$(dirname "$0")"; pwd)
-export METACLAW_WORKSPACE="${METACLAW_WORKSPACE:-$HOME/metaclaw}"
+export METACLAW_WORKSPACE="${METACLAW_WORKSPACE:-$HOME/.metaclaw/workspace}"
 export METACLAW_CONFIG_FILE="${METACLAW_CONFIG_FILE:-$METACLAW_WORKSPACE/config.json}"
 export METACLAW_LOG_DIR="${METACLAW_LOG_DIR:-$METACLAW_WORKSPACE/logs}"
 export METACLAW_SERVICE_LOG="${METACLAW_SERVICE_LOG:-$METACLAW_LOG_DIR/nohup.out}"

@@ -40,7 +40,7 @@
   "wecom_bot_secret": "",
   "web_password": "",
   "agent": true,
-  "agent_workspace": "~/metaclaw",
+  "agent_workspace": "~/.metaclaw/workspace",
   "appdata_dir": "~/metaclaw/data",
   "agent_max_context_tokens": 50000,
   "agent_max_context_turns": 20,

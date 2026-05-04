@@ -141,7 +141,7 @@ Location: `~/.metaclaw/workspace/config.json`
   "model": "MiniMax-M2.7",
   "minimax_api_key": "your-api-key",
   "agent": true,
-  "agent_workspace": "~/metaclaw",
+  "agent_workspace": "~/.metaclaw/workspace",
   "web_password": ""
 }
 ```

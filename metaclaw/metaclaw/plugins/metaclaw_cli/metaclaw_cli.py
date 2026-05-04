@@ -22,7 +22,7 @@ import plugins
 from plugins import Plugin, Event, EventContext, EventAction
 from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
-from common.brand import APP_NAME, CLI_NAME
+from common.brand import APP_NAME, CLI_NAME, DEFAULT_AGENT_WORKSPACE
 from common.log import logger
 from cli import __version__
 
@@ -928,7 +928,7 @@ class MetaClawCliPlugin(Plugin):
         from bridge.bridge import Bridge
         from bridge.agent_bridge import AgentLLMModel
 
-        workspace = Path(expand_path(conf().get("agent_workspace", "~/metaclaw")))
+        workspace = Path(expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE)))
         flush_mgr = MemoryFlushManager(workspace_dir=workspace)
         flush_mgr.llm_model = AgentLLMModel(Bridge())
         return flush_mgr
@@ -974,7 +974,7 @@ class MetaClawCliPlugin(Plugin):
         from config import conf
         from common.utils import expand_path
         knowledge_dir = os.path.join(
-            expand_path(conf().get("agent_workspace", "~/metaclaw")),
+            expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE)),
             "knowledge"
         )
         if not os.path.isdir(knowledge_dir):
@@ -1022,7 +1022,7 @@ class MetaClawCliPlugin(Plugin):
         from config import conf
         from common.utils import expand_path
         knowledge_dir = os.path.join(
-            expand_path(conf().get("agent_workspace", "~/metaclaw")),
+            expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE)),
             "knowledge"
         )
         if not os.path.isdir(knowledge_dir):

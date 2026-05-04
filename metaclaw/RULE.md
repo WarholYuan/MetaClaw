@@ -5,7 +5,7 @@
 ## 工作空间目录结构
 
 ```
-~/metaclaw/
+~/.metaclaw/workspace/
 ├── AGENT.md          # 你的身份和灵魂设定
 ├── USER.md           # 用户基本信息（静态）
 ├── RULE.md           # 工作空间规则（本文件）

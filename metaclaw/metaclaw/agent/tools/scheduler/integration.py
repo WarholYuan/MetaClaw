@@ -6,6 +6,7 @@ import os
 from typing import Optional
 from config import conf
 from common.log import logger
+from common.brand import DEFAULT_AGENT_WORKSPACE
 from common.utils import expand_path
 from bridge.context import Context, ContextType
 from bridge.reply import Reply, ReplyType
@@ -32,7 +33,7 @@ def init_scheduler(agent_bridge) -> bool:
         from agent.tools.scheduler.scheduler_service import SchedulerService
         
         # Get workspace from config
-        workspace_root = expand_path(conf().get("agent_workspace", "~/metaclaw"))
+        workspace_root = expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE))
         store_path = os.path.join(workspace_root, "scheduler", "tasks.json")
         
         # Create task store
