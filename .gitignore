@@ -24,6 +24,7 @@ config.json
 /memory/
 /reports/
 /knowledge/
+/skills/
 
 # Secrets
 .env

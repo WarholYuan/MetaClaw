@@ -97,7 +97,7 @@ def ensure_workspace(workspace_dir: str, create_templates: bool = True) -> Works
     if create_templates:
         _create_template_if_missing(agent_path, _get_agent_template())
         _create_template_if_missing(user_path, _get_user_template())
-        _create_template_if_missing(rule_path, _get_rule_template())
+        _create_template_if_missing(rule_path, _get_rule_template(workspace_dir))
         _create_template_if_missing(memory_path, _get_memory_template())
         if knowledge_enabled:
             _create_template_if_missing(
@@ -405,16 +405,17 @@ def _get_user_template() -> str:
 """
 
 
-def _get_rule_template() -> str:
+def _get_rule_template(workspace_dir: str = "~/metaclaw") -> str:
     """工作空间规则模板"""
-    return """# RULE.md - 工作空间规则
+    display_workspace = os.path.expanduser(workspace_dir).rstrip(os.sep) or workspace_dir
+    return f"""# RULE.md - 工作空间规则
 
 这个文件夹是你的家。好好对待它。
 
 ## 工作空间目录结构
 
 ```
-~/metaclaw/
+{display_workspace}/
 ├── AGENT.md          # 你的身份和灵魂设定
 ├── USER.md           # 用户基本信息（静态）
 ├── RULE.md           # 工作空间规则（本文件）

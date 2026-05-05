@@ -41,7 +41,7 @@ def get_pid_file() -> str:
 def get_service_log_file() -> str:
     """Get the service stdout/stderr log file path."""
     config = load_config_json()
-    log_file = config.get("service_log_file", DEFAULT_SERVICE_LOG_FILE)
+    log_file = config.get("service_log_file") or os.path.join(get_runtime_dir(), "nohup.out")
     return str(Path(os.path.expanduser(log_file)))
 
 
