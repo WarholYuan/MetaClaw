@@ -182,6 +182,26 @@ else
 fi
 export METACLAW_CONFIG_FILE="$CONFIG_FILE"
 
+log_info "Setting runtime workspace in config..."
+CONFIG_FILE="$CONFIG_FILE" WORKSPACE_DIR="$WORKSPACE_DIR" python - <<'PY'
+import json
+import os
+
+config_file = os.environ["CONFIG_FILE"]
+workspace_dir = os.environ["WORKSPACE_DIR"]
+
+with open(config_file, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+config["agent_workspace"] = workspace_dir
+config["appdata_dir"] = os.path.join(workspace_dir, "data")
+
+with open(config_file, "w", encoding="utf-8") as f:
+    json.dump(config, f, indent=4, ensure_ascii=False)
+    f.write("\n")
+PY
+log_success "Workspace config set to $WORKSPACE_DIR"
+
 step "Installing optional components..."
 if [[ "$INSTALL_BROWSER" == "1" ]]; then
   log_info "Installing browser tool..."

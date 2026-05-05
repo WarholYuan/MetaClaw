@@ -20,6 +20,25 @@ DEFAULT_RULE_FILENAME = "RULE.md"
 DEFAULT_MEMORY_FILENAME = "MEMORY.md"
 DEFAULT_BOOTSTRAP_FILENAME = "BOOTSTRAP.md"
 
+# Compatibility with common coding-agent instruction files.
+# MetaClaw keeps RULE.md as the final project authority, but also reads the
+# files used by Codex, Claude Code, Gemini CLI, Cursor, and GitHub Copilot.
+AGENTS_FILENAME = "AGENTS.md"
+AGENTS_OVERRIDE_FILENAME = "AGENTS.override.md"
+COMPAT_CONTEXT_FILENAMES = [
+    ".cursorrules",
+    "CLAUDE.md",
+    "CLAUDE.local.md",
+    os.path.join(".claude", "CLAUDE.md"),
+    "GEMINI.md",
+    os.path.join(".github", "copilot-instructions.md"),
+]
+COMPAT_RULE_DIRS = [
+    os.path.join(".claude", "rules"),
+    os.path.join(".cursor", "rules"),
+    os.path.join(".github", "instructions"),
+]
+
 
 @dataclass
 class WorkspaceFiles:
@@ -119,14 +138,7 @@ def load_context_files(workspace_dir: str, files_to_load: Optional[List[str]] = 
         ContextFile对象列表
     """
     if files_to_load is None:
-        # 默认加载的文件（按优先级排序）
-        files_to_load = [
-            DEFAULT_AGENT_FILENAME,
-            DEFAULT_USER_FILENAME,
-            DEFAULT_RULE_FILENAME,
-            DEFAULT_MEMORY_FILENAME,     # Long-term memory (frozen snapshot)
-            DEFAULT_BOOTSTRAP_FILENAME,  # Only exists when onboarding is incomplete
-        ]
+        files_to_load = _discover_context_file_list(workspace_dir)
     
     context_files = []
     
@@ -170,6 +182,68 @@ def load_context_files(workspace_dir: str, files_to_load: Optional[List[str]] = 
             logger.warning(f"[Workspace] Failed to load {filename}: {e}")
     
     return context_files
+
+
+def _discover_context_file_list(workspace_dir: str) -> List[str]:
+    """Return context files in load order.
+
+    The order mirrors mainstream coding agents: shared project instructions
+    first, more local/specific guidance later. RULE.md is intentionally loaded
+    after compatible files so MetaClaw's native rule file remains authoritative.
+    """
+    files = [
+        DEFAULT_AGENT_FILENAME,
+        DEFAULT_USER_FILENAME,
+    ]
+
+    # Codex-style override: if AGENTS.override.md exists, use it instead of
+    # AGENTS.md for this directory.
+    agents_override = os.path.join(workspace_dir, AGENTS_OVERRIDE_FILENAME)
+    if os.path.exists(agents_override):
+        files.append(AGENTS_OVERRIDE_FILENAME)
+    else:
+        files.append(AGENTS_FILENAME)
+
+    files.extend(COMPAT_CONTEXT_FILENAMES)
+    files.extend(_discover_rule_dir_files(workspace_dir))
+    files.extend([
+        DEFAULT_RULE_FILENAME,
+        DEFAULT_MEMORY_FILENAME,     # Long-term memory (frozen snapshot)
+        DEFAULT_BOOTSTRAP_FILENAME,  # Only exists when onboarding is incomplete
+    ])
+
+    seen = set()
+    deduped = []
+    for filename in files:
+        normalized = filename.replace("\\", "/")
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        deduped.append(filename)
+    return deduped
+
+
+def _discover_rule_dir_files(workspace_dir: str) -> List[str]:
+    """Discover markdown rules in compatible rule directories."""
+    discovered = []
+    for rule_dir in COMPAT_RULE_DIRS:
+        absolute_dir = os.path.join(workspace_dir, rule_dir)
+        if not os.path.isdir(absolute_dir):
+            continue
+        for root, dirs, files in os.walk(absolute_dir):
+            dirs[:] = [d for d in dirs if not d.startswith(".")]
+            for filename in sorted(files):
+                if filename.startswith("."):
+                    continue
+                if rule_dir == os.path.join(".github", "instructions"):
+                    if not filename.endswith(".instructions.md"):
+                        continue
+                elif not filename.endswith(".md"):
+                    continue
+                absolute_file = os.path.join(root, filename)
+                relative_file = os.path.relpath(absolute_file, workspace_dir)
+                discovered.append(relative_file)
+    return sorted(discovered)
 
 
 def _create_template_if_missing(filepath: str, template_content: str):
@@ -359,6 +433,12 @@ def _get_rule_template() -> str:
 └── tmp/              # 系统临时文件（自动管理，勿手动存放重要文件）
 ```
 
+## 工作区认知
+
+- 当用户问“你的工作区在哪”“你所在电脑的文件夹”“当前目录”等文件夹问题时，回答当前真实工作空间路径。
+- 不要把这类问题理解成“AI 本体运行在哪里”，也不要回答“我没有文件夹/我运行在云端”等通用话术。
+- 如果不确定当前路径，先用工具确认 `pwd` 或读取运行时信息中的工作空间，再回答。
+
 ## 记忆系统
 
 你每次会话都是全新的，记忆文件让你保持连续性：
@@ -488,4 +568,3 @@ def _get_knowledge_index_template() -> str:
 def _get_knowledge_log_template() -> str:
     """Knowledge wiki operation log template — empty file, agent fills it."""
     return ""
-

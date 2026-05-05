@@ -12,8 +12,8 @@ let APP_VERSION = '';
 // =====================================================================
 const I18N = {
     zh: {
-        console: '',
-        nav_chat: '', nav_manage: '', nav_monitor: '',
+        console: '控制台',
+        nav_chat: '对话', nav_manage: '管理', nav_monitor: '监控',
         menu_chat: '对话', menu_config: '配置', menu_skills: '技能',
         menu_memory: '记忆', menu_knowledge: '知识库', menu_channels: '通道', menu_tasks: '定时',
         menu_logs: '日志',
