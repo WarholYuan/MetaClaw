@@ -55,7 +55,7 @@ class WechatComAppChannel(ChatChannel):
         # Build WSGI app with middleware (same as runsimple but without print)
         func = web.httpserver.StaticMiddleware(app.wsgifunc())
         func = web.httpserver.LogMiddleware(func)
-        server = web.httpserver.WSGIServer(("0.0.0.0"  # nosec B104: intentional HTTP listen all interfaces, port), func)
+        server = web.httpserver.WSGIServer(("0.0.0.0", port), func)  # nosec B104: intentional HTTP listen all interfaces
         self._http_server = server
         try:
             server.start()

@@ -58,7 +58,7 @@ class OpenAIBot(Bot, OpenAIImage, OpenAICompatibleBot):
         # acquire reply content
         if context and context.type:
             if context.type == ContextType.TEXT:
-                logger.info("[OPEN_AI] query={}"format(query))
+                logger.info("[OPEN_AI] query={}".format(query))
                 session_id = context["session_id"]
                 reply = None
                 if query == "#清除记忆":
@@ -76,7 +76,7 @@ class OpenAIBot(Bot, OpenAIImage, OpenAICompatibleBot):
                         result["content"],
                     )
                     logger.debug(
-                        "[OPEN_AI] new_query={}, session_id={}, reply_cont={}, completion_tokens={}"format(str(session), session_id, reply_content, completion_tokens)
+                        "[OPEN_AI] new_query={}, session_id={}, reply_cont={}, completion_tokens={}".format(str(session), session_id, reply_content, completion_tokens)
                     )
 
                     if total_tokens == 0:
@@ -100,7 +100,7 @@ class OpenAIBot(Bot, OpenAIImage, OpenAICompatibleBot):
             res_content = response.choices[0]["text"].strip().replace("<|endoftext|>", "")
             total_tokens = response["usage"]["total_tokens"]
             completion_tokens = response["usage"]["completion_tokens"]
-            logger.info("[OPEN_AI] reply={}"format(res_content))
+            logger.info("[OPEN_AI] reply={}".format(res_content))
             return {
                 "total_tokens": total_tokens,
                 "completion_tokens": completion_tokens,
@@ -110,26 +110,26 @@ class OpenAIBot(Bot, OpenAIImage, OpenAICompatibleBot):
             need_retry = retry_count < 2
             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
             if isinstance(e, RateLimitError):
-                logger.warn("[OPEN_AI] RateLimitError: {}"format(e))
+                logger.warn("[OPEN_AI] RateLimitError: {}".format(e))
                 result["content"] = "提问太快啦，请休息一下再问我吧"
                 if need_retry:
                     time.sleep(20)
             elif isinstance(e, Timeout):
-                logger.warn("[OPEN_AI] Timeout: {}"format(e))
+                logger.warn("[OPEN_AI] Timeout: {}".format(e))
                 result["content"] = "我没有收到你的消息"
                 if need_retry:
                     time.sleep(5)
             elif isinstance(e, APIConnectionError):
-                logger.warn("[OPEN_AI] APIConnectionError: {}"format(e))
+                logger.warn("[OPEN_AI] APIConnectionError: {}".format(e))
                 need_retry = False
                 result["content"] = "我连接不到你的网络"
             else:
-                logger.warn("[OPEN_AI] Exception: {}"format(e))
+                logger.warn("[OPEN_AI] Exception: {}".format(e))
                 need_retry = False
                 self.sessions.clear_session(session.session_id)
 
             if need_retry:
-                logger.warn("[OPEN_AI] 第{}次重试"format(retry_count + 1))
+                logger.warn("[OPEN_AI] 第{}次重试".format(retry_count + 1))
                 return self.reply_text(session, retry_count + 1)
             else:
                 return result
