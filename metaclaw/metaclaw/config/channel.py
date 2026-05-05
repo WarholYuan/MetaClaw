@@ -83,6 +83,7 @@ CHANNEL_SETTINGS = {
     "subscribe_msg": "",  # 订阅消息, 支持: wechatmp, wechatmp_service, wechatcom_app
     "debug": False,  # 是否开启debug模式，开启后会打印更多日志
     "appdata_dir": DEFAULT_APPDATA_DIR,  # 数据目录，默认放在用户工作区，不污染程序目录
+    "service_log_file": "",  # CLI 后台服务 stdout/stderr 日志文件；留空则使用工作区 logs/nohup.out
     # 插件配置
     "plugin_trigger_prefix": "$",  # 规范插件提供聊天相关指令的前缀，建议不要和管理员指令前缀"#"冲突
     # 是否使用全局插件配置

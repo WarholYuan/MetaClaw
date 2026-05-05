@@ -195,6 +195,7 @@ with open(config_file, "r", encoding="utf-8") as f:
 
 config["agent_workspace"] = workspace_dir
 config["appdata_dir"] = os.path.join(workspace_dir, "data")
+config["service_log_file"] = os.path.join(workspace_dir, "logs", "nohup.out")
 
 with open(config_file, "w", encoding="utf-8") as f:
     json.dump(config, f, indent=4, ensure_ascii=False)
