@@ -79,8 +79,8 @@ Instructions, examples, and usage patterns...
 
 Skills are loaded from two locations (higher precedence overrides lower):
 
-1. **Builtin skills** (lower): `<project_root>/skills/` — shipped with the codebase
-2. **Custom skills** (higher): `~/metaclaw/skills/` — installed via `metaclaw skill install` or skill creator
+1. **Builtin skills** (lower): `<project_root>/skills/`, where `project_root` is the Python package root (`metaclaw/metaclaw`) — shipped with the codebase
+2. **Custom skills** (higher): the configured agent workspace `skills/` directory, for example `~/.metaclaw/workspace/skills/` — installed via `metaclaw skill install` or skill creator
 
 Skills with the same name in the custom directory override builtin ones.
 
