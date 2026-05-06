@@ -15,14 +15,14 @@ class Write(BaseTool):
     """Tool for writing file content"""
     
     name: str = "write"
-    description: str = "Write content to a file. Creates the file if it doesn't exist, overwrites if it does. Automatically creates parent directories. IMPORTANT: Single write should not exceed 10KB. For large files, create a skeleton first, then use edit to add content in chunks."
+    description: str = "Write content to a file. Creates the file if it doesn't exist, overwrites if it does. Automatically creates parent directories. By default, bare generated filenames like report.md are saved under workspace tmp/. Use an explicit directory for memory, knowledge, skills, rules, or user-requested durable files. IMPORTANT: Single write should not exceed 10KB. For large files, create a skeleton first, then use edit to add content in chunks."
     
     params: dict = {
         "type": "object",
         "properties": {
             "path": {
                 "type": "string",
-                "description": "Path to the file to write (relative or absolute)"
+                "description": "Path to the file to write (relative or absolute). Bare filenames default to workspace tmp/ unless they are reserved workspace files such as AGENT.md, USER.md, RULE.md, or MEMORY.md."
             },
             "content": {
                 "type": "string",
@@ -44,7 +44,8 @@ class Write(BaseTool):
         :param args: Contains file path and content
         :return: Operation result
         """
-        path = args.get("path", "").strip()
+        original_path = args.get("path", "").strip()
+        path = original_path
         content = args.get("content", "")
         
         if not path:
@@ -55,6 +56,7 @@ class Write(BaseTool):
             absolute_path = self._resolve_path(path)
         except ValueError as e:
             return ToolResult.fail(f"Error: Invalid path - {e}")
+        display_path = self._display_path(absolute_path)
         
         # Security check: Path traversal prevention
         allowed, reason = self._is_path_allowed(absolute_path)
@@ -75,21 +77,31 @@ class Write(BaseTool):
             bytes_written = len(content.encode('utf-8'))
             
             # Auto-sync to memory database if this is a memory file
-            if self.memory_manager and 'memory/' in path:
+            if self.memory_manager and 'memory/' in display_path:
                 self.memory_manager.mark_dirty()
             
             result = {
-                "message": f"Successfully wrote {bytes_written} bytes to {path}",
-                "path": path,
+                "message": f"Successfully wrote {bytes_written} bytes to {display_path}",
+                "path": display_path,
                 "bytes_written": bytes_written
             }
             
             return ToolResult.success(result)
             
         except PermissionError:
-            return ToolResult.fail(f"Error: Permission denied writing to {path}")
+            return ToolResult.fail(f"Error: Permission denied writing to {display_path}")
         except Exception as e:
             return ToolResult.fail(f"Error writing file: {str(e)}")
+
+    _ROOT_WORKSPACE_FILES = {
+        "AGENT.md",
+        "USER.md",
+        "RULE.md",
+        "MEMORY.md",
+        "BOOTSTRAP.md",
+        "AGENTS.md",
+        "AGENTS.override.md",
+    }
     
     def _resolve_path(self, path: str) -> str:
         """
@@ -99,6 +111,8 @@ class Write(BaseTool):
         :return: Absolute path
         :raises ValueError: if path contains directory traversal attempts
         """
+        original_path = path
+
         # Expand ~ to user home directory
         path = expand_path(path)
         
@@ -115,7 +129,35 @@ class Write(BaseTool):
         
         if os.path.isabs(path):
             return path
+        if self._should_default_to_tmp(original_path, path):
+            path = os.path.join("tmp", path)
         return os.path.abspath(os.path.join(self.cwd, path))
+
+    def _should_default_to_tmp(self, original_path: str, normalized_path: str) -> bool:
+        """
+        Treat a bare filename as a generated artifact and place it in tmp/.
+
+        Explicit relative paths (e.g. ``memory/foo.md``, ``./README.md``) keep
+        their requested location. Reserved workspace files also stay at root.
+        """
+        if os.path.isabs(normalized_path):
+            return False
+        if original_path.startswith((".", "~")):
+            return False
+        if os.sep in normalized_path or (os.altsep and os.altsep in normalized_path):
+            return False
+        if normalized_path in self._ROOT_WORKSPACE_FILES:
+            return False
+        return True
+
+    def _display_path(self, absolute_path: str) -> str:
+        try:
+            rel = os.path.relpath(absolute_path, self.cwd)
+            if not rel.startswith("..") and rel != os.curdir:
+                return rel
+        except ValueError:
+            pass
+        return absolute_path
     
     def _is_path_allowed(self, absolute_path: str) -> tuple[bool, str]:
         """

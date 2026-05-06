@@ -129,6 +129,38 @@ def test_write_in_tempdir():
         assert os.path.exists(test_path)
 
 
+def test_write_bare_filename_defaults_to_tmp():
+    """Generated bare filenames are stored under workspace tmp by default."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = Write(config={"cwd": tmpdir})
+        result = writer.execute({"path": "report.md", "content": "ok"})
+        assert is_ok(result)
+        assert result.result["path"] == os.path.join("tmp", "report.md")
+        assert os.path.exists(os.path.join(tmpdir, "tmp", "report.md"))
+        assert not os.path.exists(os.path.join(tmpdir, "report.md"))
+
+
+def test_write_reserved_workspace_file_stays_at_root():
+    """Core workspace files are not treated as generated artifacts."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = Write(config={"cwd": tmpdir})
+        result = writer.execute({"path": "MEMORY.md", "content": "remember"})
+        assert is_ok(result)
+        assert result.result["path"] == "MEMORY.md"
+        assert os.path.exists(os.path.join(tmpdir, "MEMORY.md"))
+        assert not os.path.exists(os.path.join(tmpdir, "tmp", "MEMORY.md"))
+
+
+def test_write_explicit_relative_path_is_respected():
+    """Explicit directories keep their requested location."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = Write(config={"cwd": tmpdir})
+        result = writer.execute({"path": "knowledge/note.md", "content": "ok"})
+        assert is_ok(result)
+        assert result.result["path"] == os.path.join("knowledge", "note.md")
+        assert os.path.exists(os.path.join(tmpdir, "knowledge", "note.md"))
+
+
 def test_write_missing_path():
     writer = Write()
     result = writer.execute({"path": "", "content": "x"})

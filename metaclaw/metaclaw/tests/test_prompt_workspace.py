@@ -1,6 +1,6 @@
 import os
 
-from agent.prompt.workspace import load_context_files
+from agent.prompt.workspace import ensure_workspace, load_context_files
 
 
 def test_load_context_files_keeps_rule_authoritative(tmp_path):
@@ -57,3 +57,9 @@ def test_agents_override_replaces_agents_md(tmp_path):
 
     assert "AGENTS.md" not in paths
     assert "AGENTS.override.md" in paths
+
+
+def test_ensure_workspace_creates_tmp_dir(tmp_path):
+    ensure_workspace(str(tmp_path), create_templates=False)
+
+    assert (tmp_path / "tmp").is_dir()

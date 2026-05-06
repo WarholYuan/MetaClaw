@@ -87,6 +87,10 @@ def ensure_workspace(workspace_dir: str, create_templates: bool = True) -> Works
     websites_dir = os.path.join(workspace_dir, "websites")
     os.makedirs(websites_dir, exist_ok=True)
 
+    # 创建tmp子目录 (default location for generated runtime artifacts)
+    tmp_dir = os.path.join(workspace_dir, "tmp")
+    os.makedirs(tmp_dir, exist_ok=True)
+
     from config import conf
     knowledge_enabled = conf().get("knowledge", True)
     if knowledge_enabled:
@@ -431,7 +435,7 @@ def _get_rule_template(workspace_dir: str = "~/metaclaw") -> str:
 │
 ├── skills/           # 技能
 ├── websites/         # 网页产物
-└── tmp/              # 系统临时文件（自动管理，勿手动存放重要文件）
+└── tmp/              # 默认生成文件、附件、截图和系统临时文件（自动管理，勿手动存放重要文件）
 ```
 
 ## 工作区认知
@@ -439,6 +443,7 @@ def _get_rule_template(workspace_dir: str = "~/metaclaw") -> str:
 - 当用户问“你的工作区在哪”“你所在电脑的文件夹”“当前目录”等文件夹问题时，回答当前真实工作空间路径。
 - 不要把这类问题理解成“AI 本体运行在哪里”，也不要回答“我没有文件夹/我运行在云端”等通用话术。
 - 如果不确定当前路径，先用工具确认 `pwd` 或读取运行时信息中的工作空间，再回答。
+- 运行过程中生成的文件（报告、草稿、下载附件、截图、临时网页、转换产物等）默认保存到 `tmp/`。只有用户明确要求长期保留，或属于记忆/知识/技能/规则文件时，才写入对应目录。
 
 ## 记忆系统
 

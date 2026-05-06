@@ -2,10 +2,15 @@ import hashlib
 import os
 import shutil
 
+from common.brand import DEFAULT_AGENT_WORKSPACE
+from common.utils import expand_path
+from config import conf
+
 
 def _session_dir(session_id: str) -> str:
     h = hashlib.sha256(session_id.encode()).hexdigest()[:8]
-    return os.path.join("tmp", h)
+    workspace_root = expand_path(conf().get("agent_workspace", DEFAULT_AGENT_WORKSPACE))
+    return os.path.join(workspace_root, "tmp", h)
 
 
 def get_session_tmp_dir(session_id: str) -> str:
