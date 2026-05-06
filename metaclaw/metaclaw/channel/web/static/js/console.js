@@ -509,6 +509,7 @@ let sessionId = loadOrCreateSessionId();
 let historyPage = 0;       // last page fetched (0 = nothing fetched yet)
 let historyHasMore = false;
 let historyLoading = false;
+const sessionDomCache = {}; // session_id -> { fragment, historyPage, historyHasMore }
 
 fetch('/config').then(r => r.json()).then(data => {
     if (data.status === 'success') {
@@ -1000,7 +1001,7 @@ function sendMessage() {
         .then(data => {
             if (data.status === 'success') {
                 if (data.stream) {
-                    startSSE(data.request_id, loadingEl, timestamp, titleInfo);
+                    startSSE(data.request_id, loadingEl, timestamp, titleInfo, body.session_id);
                 } else {
                     loadingContainers[data.request_id] = loadingEl;
                 }
@@ -1028,7 +1029,55 @@ function sendMessage() {
     postWithRetry(0);
 }
 
-function startSSE(requestId, loadingEl, timestamp, titleInfo) {
+function _isVisibleSession(sid) {
+    return sid === sessionId;
+}
+
+function _scrollStreamSession(sid, force = false) {
+    if (_isVisibleSession(sid)) scrollChatToBottom(force);
+}
+
+function _cacheCurrentSessionDom() {
+    if (!sessionId || !messagesDiv || !messagesDiv.childNodes.length) return;
+    const fragment = document.createDocumentFragment();
+    while (messagesDiv.firstChild) {
+        fragment.appendChild(messagesDiv.firstChild);
+    }
+    sessionDomCache[sessionId] = {
+        fragment,
+        historyPage,
+        historyHasMore,
+    };
+}
+
+function _restoreCachedSessionDom(sid) {
+    const cached = sessionDomCache[sid];
+    if (!cached) return false;
+    messagesDiv.innerHTML = '';
+    messagesDiv.appendChild(cached.fragment);
+    historyPage = cached.historyPage || 0;
+    historyHasMore = !!cached.historyHasMore;
+    historyLoading = false;
+    delete sessionDomCache[sid];
+    document.body.classList.toggle('empty-chat', messagesDiv.childNodes.length === 0);
+    requestAnimationFrame(() => scrollChatToBottom(true));
+    return true;
+}
+
+function _getStreamAppendTarget(streamSessionId, loadingEl) {
+    if (loadingEl && loadingEl.parentNode) return loadingEl.parentNode;
+    if (_isVisibleSession(streamSessionId)) return messagesDiv;
+    if (!sessionDomCache[streamSessionId]) {
+        sessionDomCache[streamSessionId] = {
+            fragment: document.createDocumentFragment(),
+            historyPage: 0,
+            historyHasMore: false,
+        };
+    }
+    return sessionDomCache[streamSessionId].fragment;
+}
+
+function startSSE(requestId, loadingEl, timestamp, titleInfo, streamSessionId = sessionId) {
     let botEl = null;
     let stepsEl = null;    // .agent-steps  (thinking summaries + tool indicators)
     let contentEl = null;  // .answer-content (final streaming answer)
@@ -1046,7 +1095,6 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
 
     function ensureBotEl() {
         if (botEl) return;
-        if (loadingEl) { loadingEl.remove(); loadingEl = null; }
         botEl = document.createElement('div');
         botEl.className = 'flex gap-3 px-4 sm:px-6 py-3';
         botEl.dataset.requestId = requestId;
@@ -1066,7 +1114,14 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 </div>
             </div>
         `;
-        messagesDiv.appendChild(botEl);
+        const target = _getStreamAppendTarget(streamSessionId, loadingEl);
+        if (loadingEl && loadingEl.parentNode) {
+            loadingEl.parentNode.insertBefore(botEl, loadingEl);
+            loadingEl.remove();
+            loadingEl = null;
+        } else {
+            target.appendChild(botEl);
+        }
         stepsEl = botEl.querySelector('.agent-steps');
         contentEl = botEl.querySelector('.answer-content');
         mediaEl = botEl.querySelector('.media-content');
@@ -1140,7 +1195,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                                     );
                                 }
                             }
-                            scrollChatToBottom();
+                            _scrollStreamSession(streamSessionId);
                         });
                     }
                 }
@@ -1154,7 +1209,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 }
                 accumulatedText += item.content;
                 contentEl.innerHTML = renderMarkdown(accumulatedText);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'message_end') {
                 if (item.has_tool_calls && accumulatedText.trim()) {
@@ -1165,7 +1220,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                     stepsEl.appendChild(frozenEl);
                     accumulatedText = '';
                     contentEl.innerHTML = '';
-                    scrollChatToBottom();
+                    _scrollStreamSession(streamSessionId);
                 }
 
             } else if (item.type === 'tool_start') {
@@ -1197,7 +1252,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                     </div>`;
                 stepsEl.appendChild(currentToolEl);
 
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'tool_end') {
                 if (currentToolEl) {
@@ -1233,7 +1288,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 imgEl.style.cssText = 'max-width:600px;border-radius:8px;margin:8px 0;cursor:zoom-in;box-shadow:0 1px 4px rgba(0,0,0,0.1);';
                 imgEl.onclick = () => _openImageLightbox(imgEl.src);
                 mediaEl.appendChild(imgEl);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'text') {
                 // Intermediate text sent before media items; display it but keep SSE open.
@@ -1242,14 +1297,14 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 const textContent = item.content || accumulatedText;
                 if (textContent) contentEl.innerHTML = renderMarkdown(textContent);
                 applyHighlighting(botEl);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'video') {
                 ensureBotEl();
                 const wrapper = document.createElement('div');
                 wrapper.innerHTML = _buildVideoHtml(item.content);
                 mediaEl.appendChild(wrapper.firstElementChild || wrapper);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'file') {
                 ensureBotEl();
@@ -1262,7 +1317,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 fileEl.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:8px 14px;margin:8px 0;border-radius:8px;background:var(--bg-secondary,#f3f4f6);color:var(--text-primary,#374151);text-decoration:none;font-size:14px;border:1px solid var(--border-color,#e5e7eb);';
                 fileEl.innerHTML = `<i class="fas fa-file-download" style="color:#6b7280;"></i> ${fileName}`;
                 mediaEl.appendChild(fileEl);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'phase') {
                 // Coarse progress (e.g. metaclaw install-browser); must not close SSE (unlike "done")
@@ -1271,7 +1326,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 wrap.className = 'text-xs sm:text-sm text-slate-600 dark:text-slate-400 border-l-2 border-primary-400 pl-2 py-1 my-0.5';
                 wrap.textContent = String(item.content || '');
                 stepsEl.appendChild(wrap);
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
             } else if (item.type === 'done') {
                 done = true;
@@ -1283,7 +1338,12 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
 
                 if (!botEl && finalText) {
                     if (loadingEl) { loadingEl.remove(); loadingEl = null; }
-                    addBotMessage(finalText, new Date((item.timestamp || Date.now() / 1000) * 1000), requestId);
+                    if (_isVisibleSession(streamSessionId)) {
+                        addBotMessage(finalText, new Date((item.timestamp || Date.now() / 1000) * 1000), requestId);
+                    } else {
+                        botEl = createBotMessageEl(finalText, new Date((item.timestamp || Date.now() / 1000) * 1000), requestId);
+                        _getStreamAppendTarget(streamSessionId, null).appendChild(botEl);
+                    }
                 } else if (botEl) {
                     contentEl.classList.remove('sse-streaming');
                     if (finalText) contentEl.innerHTML = renderMarkdown(finalText);
@@ -1292,7 +1352,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                     if (copyBtn && finalText) copyBtn.style.display = '';
                     applyHighlighting(botEl);
                 }
-                scrollChatToBottom();
+                _scrollStreamSession(streamSessionId);
 
                 if (titleInfo) {
                     generateSessionTitle(titleInfo.sid, titleInfo.userMsg, '');
@@ -1306,7 +1366,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
                 es.close();
                 delete activeStreams[requestId];
                 if (loadingEl) { loadingEl.remove(); loadingEl = null; }
-                addBotMessage(t('error_send'), new Date());
+                if (_isVisibleSession(streamSessionId)) addBotMessage(t('error_send'), new Date());
             }
         };
 
@@ -1333,7 +1393,7 @@ function startSSE(requestId, loadingEl, timestamp, titleInfo) {
             // Exhausted retries, show whatever we have
             if (loadingEl) { loadingEl.remove(); loadingEl = null; }
             if (!botEl) {
-                addBotMessage(t('error_send'), new Date());
+                if (_isVisibleSession(streamSessionId)) addBotMessage(t('error_send'), new Date());
             } else if (accumulatedText) {
                 contentEl.classList.remove('sse-streaming');
                 contentEl.innerHTML = renderMarkdown(accumulatedText);
@@ -1629,10 +1689,12 @@ function addBotMessage(content, timestamp, requestId) {
 function loadHistory(page) {
     if (historyLoading) return;
     historyLoading = true;
+    const targetSessionId = sessionId;
 
-    fetch(`/api/history?session_id=${encodeURIComponent(sessionId)}&page=${page}&page_size=20`)
+    fetch(`/api/history?session_id=${encodeURIComponent(targetSessionId)}&page=${page}&page_size=20`)
         .then(r => r.json())
         .then(data => {
+            if (targetSessionId !== sessionId) return;
             if (data.status !== 'success' || data.messages.length === 0) {
                 if (page === 1 && currentView === 'chat' && document.getElementById('welcome-screen')) {
                     document.body.classList.add('empty-chat');
@@ -1743,14 +1805,13 @@ function addLoadingIndicator() {
 }
 
 function newChat() {
-    // Close all active SSE connections for the current session
-    Object.values(activeStreams).forEach(es => { try { es.close(); } catch (_) {} });
-    activeStreams = {};
+    // Keep any in-progress stream alive when starting another chat. The
+    // detached DOM is restored if the user switches back before it finishes.
+    _cacheCurrentSessionDom();
 
     // Generate a fresh session and persist it so the next page load also starts clean
     sessionId = generateSessionId();
     localStorage.setItem(SESSION_ID_KEY, sessionId);
-    loadingContainers = {};
     startPolling();  // bump generation so old loop self-cancels, new loop uses fresh sessionId
     messagesDiv.innerHTML = '';
     document.body.classList.add('empty-chat');
@@ -2097,9 +2158,7 @@ function switchSession(newSessionId) {
         return;
     }
 
-    Object.values(activeStreams).forEach(es => { try { es.close(); } catch (_) {} });
-    activeStreams = {};
-    loadingContainers = {};
+    _cacheCurrentSessionDom();
 
     sessionId = newSessionId;
     localStorage.setItem(SESSION_ID_KEY, sessionId);
@@ -2108,8 +2167,10 @@ function switchSession(newSessionId) {
     historyHasMore = false;
     historyLoading = false;
 
-    messagesDiv.innerHTML = '';
-    loadHistory(1);
+    if (!_restoreCachedSessionDom(sessionId)) {
+        messagesDiv.innerHTML = '';
+        loadHistory(1);
+    }
     startPolling();
 
     document.querySelectorAll('.session-item').forEach(el => {
