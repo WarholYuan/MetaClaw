@@ -15,6 +15,7 @@ tmp/*
 
 # Claude runtime
 .claude/skills/
+.external-skills/
 metaclaw/config.json
 config.json
 .claude/
