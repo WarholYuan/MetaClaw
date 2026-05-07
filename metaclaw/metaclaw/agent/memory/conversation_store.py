@@ -527,7 +527,7 @@ class ConversationStore:
                 with conn:
                     stale = conn.execute(
                         "SELECT session_id FROM sessions "
-                        "WHERE last_active < ? AND channel_type != 'web'",
+                        "WHERE last_active < ? AND channel_type NOT IN ('web', '')",
                         (cutoff,),
                     ).fetchall()
                     for (sid,) in stale:
@@ -674,15 +674,19 @@ class ConversationStore:
             conn = self._connect()
             try:
                 if channel_type:
+                    if channel_type == "web":
+                        channel_clause = "channel_type IN (?, '')"
+                    else:
+                        channel_clause = "channel_type = ?"
                     total = conn.execute(
-                        "SELECT COUNT(*) FROM sessions WHERE channel_type = ?",
+                        f"SELECT COUNT(*) FROM sessions WHERE {channel_clause}",
                         (channel_type,),
                     ).fetchone()[0]
                     rows = conn.execute(
-                        """
+                        f"""
                         SELECT session_id, title, created_at, last_active, msg_count
                         FROM sessions
-                        WHERE channel_type = ?
+                        WHERE {channel_clause}
                         ORDER BY last_active DESC
                         LIMIT ? OFFSET ?
                         """,

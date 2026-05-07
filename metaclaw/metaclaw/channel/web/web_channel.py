@@ -148,6 +148,7 @@ class WebMessage(ChatMessage):
 
 @singleton
 class WebChannel(ChatChannel):
+    channel_type = "web"
     NOT_SUPPORT_REPLYTYPE = [ReplyType.VOICE]
     _instance = None
 
