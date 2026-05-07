@@ -325,7 +325,7 @@ select_model() {
     echo -e "${YELLOW}7) Qwen (qwen3.6-plus, qwen3.5-plus, qwen3-max, qwq-plus, etc.)${NC}"
     echo -e "${YELLOW}8) Doubao (doubao-seed-2-0-code-preview-260215, etc.)${NC}"
     echo -e "${YELLOW}9) Kimi (kimi-k2.6, kimi-k2.5, kimi-k2, etc.)${NC}"
-    echo -e "${YELLOW}10) LinkAI (access multiple models via one API)${NC}"
+    echo -e "${YELLOW}10) MetaClaw (access multiple models via one API)${NC}"
     echo ""
     
     while true; do
@@ -640,14 +640,14 @@ start_project() {
         echo -e "  ${GREEN}metaclaw restart${NC}    Restart the service"
         echo -e "  ${GREEN}metaclaw status${NC}     Check status"
         echo -e "  ${GREEN}metaclaw logs${NC}       View logs"
-        echo -e "  ${GREEN}metaclaw update 2.0.10${NC}  Update to a version and restart"
+        echo -e "  ${GREEN}metaclaw update 2.0.20${NC}  Update to a version and restart"
         echo -e "  ${GREEN}metaclaw install-browser${NC}  Install browser tool"
     else
         echo -e "  ${GREEN}./run.sh stop${NC}       Stop the service"
         echo -e "  ${GREEN}./run.sh restart${NC}    Restart the service"
         echo -e "  ${GREEN}./run.sh status${NC}     Check status"
         echo -e "  ${GREEN}./run.sh logs${NC}       View logs"
-        echo -e "  ${GREEN}./run.sh update 2.0.10${NC}  Update to a version and restart"
+        echo -e "  ${GREEN}./run.sh update 2.0.20${NC}  Update to a version and restart"
     fi
     echo -e "${CYAN}${BOLD}=========================================${NC}"
     echo ""
@@ -680,7 +680,7 @@ show_usage() {
     echo -e "  ${GREEN}./run.sh start${NC}"
     echo -e "  ${GREEN}./run.sh logs${NC}"
     echo -e "  ${GREEN}./run.sh status${NC}"
-    echo -e "  ${GREEN}./run.sh update 2.0.10${NC}"
+    echo -e "  ${GREEN}./run.sh update 2.0.20${NC}"
     echo -e "${CYAN}${BOLD}=========================================${NC}"
 }
 
@@ -876,7 +876,7 @@ cmd_update() {
         dirty_files=$(git status --porcelain)
         if [ -n "$dirty_files" ] && [ "$force_update" = false ]; then
             echo -e "${RED}❌ Local source files have changes. Update aborted.${NC}"
-            echo -e "${YELLOW}Run 'git status' here, or use './run.sh update ${target_version:-2.0.10} --force' if you know what you are doing.${NC}"
+            echo -e "${YELLOW}Run 'git status' here, or use './run.sh update ${target_version:-2.0.20} --force' if you know what you are doing.${NC}"
             exit 1
         fi
 
@@ -904,7 +904,7 @@ cmd_update() {
         fi
     else
         if [ -z "$target_version" ]; then
-            echo -e "${RED}❌ Not a git repository. Provide a version, for example: ./run.sh update 2.0.10${NC}"
+            echo -e "${RED}❌ Not a git repository. Provide a version, for example: ./run.sh update 2.0.20${NC}"
             exit 1
         fi
         if has_metaclaw_cli; then

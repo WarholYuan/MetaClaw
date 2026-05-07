@@ -7,7 +7,14 @@ import logging
 import os
 import pickle
 
-from common.brand import DEFAULT_AGENT_WORKSPACE, DEFAULT_APPDATA_DIR, DEFAULT_WEIXIN_CREDENTIALS_PATH
+from dotenv import load_dotenv
+
+from common.brand import (
+    DEFAULT_AGENT_WORKSPACE,
+    DEFAULT_APPDATA_DIR,
+    DEFAULT_ENV_FILE,
+    DEFAULT_WEIXIN_CREDENTIALS_PATH,
+)
 from common.log import logger
 
 from .models import MODEL_SETTINGS
@@ -250,6 +257,7 @@ def load_config():
     logger.info("| |  | |  __/ || (_| | |___| | (_| |\\ V  V / ")
     logger.info("|_|  |_|\\___|\\__\\__,_|\\____|_|\\__,_| \\_/\\_/  ")
     logger.info("")
+    load_dotenv(os.path.expanduser(DEFAULT_ENV_FILE), override=False)
     config_path = get_config_path()
     if os.path.basename(config_path) == "config-template.json":
         logger.info("配置文件不存在，将使用config-template.json模板")
@@ -290,6 +298,21 @@ def load_config():
         config["appdata_dir"] = DEFAULT_APPDATA_DIR
     if config.get("weixin_credentials_path") == "~/.weixin_metaclaw_credentials.json":
         config["weixin_credentials_path"] = DEFAULT_WEIXIN_CREDENTIALS_PATH
+
+    if not config.get("model_provider"):
+        config["model_provider"] = "deepseek"
+
+    _PROVIDER_ENV_TO_CONFIG = {
+        "DEEPSEEK_API_KEY": "deepseek_api_key",
+        "DOUBAO_API_KEY": "ark_api_key",
+        "MOONSHOT_API_KEY": "moonshot_api_key",
+        "OPENAI_API_KEY": "open_ai_api_key",
+    }
+    for env_key, conf_key in _PROVIDER_ENV_TO_CONFIG.items():
+        value = os.environ.get(env_key, "").strip()
+        if value:
+            config[conf_key] = value
+            logger.info(_format_env_override_log(conf_key, value))
 
     # override config with environment variables.
     # Some online deployment platforms (e.g. Railway) deploy project from github directly. So you shouldn't put your secrets like api key in a config file, instead use environment variables to override the default config.
@@ -332,6 +355,8 @@ def load_config():
     _CONFIG_TO_ENV = {
         "open_ai_api_key": "OPENAI_API_KEY",
         "open_ai_api_base": "OPENAI_API_BASE",
+        "deepseek_api_key": "DEEPSEEK_API_KEY",
+        "deepseek_api_base": "DEEPSEEK_API_BASE",
         "claude_api_key": "CLAUDE_API_KEY",
         "claude_api_base": "CLAUDE_API_BASE",
         "gemini_api_key": "GEMINI_API_KEY",

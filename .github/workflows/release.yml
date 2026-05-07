@@ -25,10 +25,16 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           
-          # Generate release notes from CHANGELOG.md
+          # Generate release notes from CHANGELOG.md. Supports both:
+          #   ## 1.0.0 (2026-05-06)
+          #   ## [1.0.0] - 2026-05-06
           if [ -f CHANGELOG.md ]; then
             # Extract section for this version
-            awk "/^## \[$VERSION\]/ {flag=1; next} /^## \[/ {flag=0} flag" CHANGELOG.md > release_notes.md || true
+            awk -v version="$VERSION" '
+              $0 ~ "^##[[:space:]]+(\\[" version "\\]|" version ")([[:space:]]|$)" { flag=1; next }
+              $0 ~ "^##[[:space:]]+" && flag { flag=0 }
+              flag
+            ' CHANGELOG.md > release_notes.md || true
             if [ -s release_notes.md ]; then
               cat release_notes.md
             else

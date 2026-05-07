@@ -167,7 +167,7 @@ class ChannelManager:
     def restart(self, new_channel_name: str):
         """
         Restart a single channel with a new channel type.
-        Can be called from any thread (e.g. linkai config callback).
+        Can be called from any thread (e.g. remote config callback).
         """
         logger.info(f"[ChannelManager] Restarting channel to '{new_channel_name}'...")
         self.stop(new_channel_name)

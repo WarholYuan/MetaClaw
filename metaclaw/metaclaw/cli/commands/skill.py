@@ -328,7 +328,7 @@ def _install_local(path: str, result: InstallResult):
 def _register_installed_skill(name: str, source: str = "metaclaw", display_name: str = ""):
     """Register a newly installed skill into skills_config.json.
 
-    source values: builtin, metaclaw, github, clawhub, linkai, local, url
+    source values: builtin, metaclaw, github, clawhub, local, url
     """
     skills_dir = get_skills_dir()
     config_path = os.path.join(skills_dir, "skills_config.json")
@@ -1058,6 +1058,18 @@ def _install_zip_bytes(content, name, skills_dir, result: InstallResult = None, 
 @click.option("--yes", "-y", is_flag=True, help="Skip confirmation")
 def uninstall(name, yes):
     """Uninstall a skill."""
+    _remove_skill(name, confirm=not yes, action="uninstalled")
+
+
+@skill.command("remove")
+@click.argument("name")
+def remove_skill(name):
+    """Remove an installed skill."""
+    _remove_skill(name, confirm=False, action="removed")
+
+
+def _remove_skill(name, confirm: bool, action: str):
+    """Remove a custom skill directory and unregister it from skills_config.json."""
     _validate_skill_name(name)
     skills_dir = get_skills_dir()
     skill_dir = os.path.join(skills_dir, name)
@@ -1066,7 +1078,7 @@ def uninstall(name, yes):
         click.echo(f"Error: Skill '{name}' is not installed.", err=True)
         sys.exit(1)
 
-    if not yes:
+    if confirm:
         click.confirm(f"Uninstall skill '{name}'?", abort=True)
 
     shutil.rmtree(skill_dir)
@@ -1082,7 +1094,7 @@ def uninstall(name, yes):
         except Exception:
             pass
 
-    click.echo(click.style(f"✓ Skill '{name}' uninstalled.", fg="green"))
+    click.echo(click.style(f"✓ Skill '{name}' {action}.", fg="green"))
 
 
 # ------------------------------------------------------------------

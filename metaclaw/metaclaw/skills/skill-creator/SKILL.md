@@ -282,7 +282,7 @@ Write the YAML frontmatter with `name`, `description`, and optional `metadata`:
 - `metadata`: (Optional) Specify requirements and configuration
   - `requires.bins`: Required binaries (e.g., `["curl", "jq"]`)
   - `requires.env`: Required environment variables — all must be set (e.g., `["MYAPI_KEY"]`)
-  - `requires.anyEnv`: Alternative environment variables — at least one must be set (e.g., `["OPENAI_API_KEY", "LINKAI_API_KEY"]`)
+  - `requires.anyEnv`: Alternative environment variables — at least one must be set (e.g., `["OPENAI_API_KEY", "DEEPSEEK_API_KEY"]`)
   - `requires.anyBins`: Alternative binaries — at least one must be present
   - `always`: Set to `true` to always load regardless of requirements
   - `emoji`: Skill icon (optional)
@@ -303,7 +303,7 @@ metadata:
 ---
 ```
 
-If your skill supports multiple API key providers (e.g., OpenAI or LinkAI), use `requires.anyEnv`:
+If your skill supports multiple API key providers (e.g., OpenAI or MetaClaw), use `requires.anyEnv`:
 
 ```yaml
 ---
@@ -312,7 +312,7 @@ description: Analyze images using Vision API
 metadata:
   requires:
     bins: ["curl"]
-    anyEnv: ["OPENAI_API_KEY", "LINKAI_API_KEY"]
+    anyEnv: ["OPENAI_API_KEY", "DEEPSEEK_API_KEY"]
 ---
 ```
 

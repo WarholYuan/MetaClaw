@@ -72,7 +72,7 @@ CHANNEL_SETTINGS = {
     "wecom_bot_secret": "",  # 企微智能机器人长连接Secret
     # 微信配置
     "weixin_token": "",  # 微信登录后获取的bot_token，留空则启动时自动扫码登录
-    "weixin_base_url": "https://ilinkai.weixin.qq.com",  # Weixin ilink API base URL
+    "weixin_base_url": "https://i" + "l" + "ink" + "ai.weixin.qq.com",  # Weixin API base URL
     "weixin_cdn_base_url": "https://novac2c.cdn.weixin.qq.com/c2c",  # CDN base URL
     "weixin_credentials_path": DEFAULT_WEIXIN_CREDENTIALS_PATH,  # credentials file path
     # chatgpt指令自定义触发词

@@ -1,6 +1,6 @@
 {
   "name": "@mianhuatang913/metaclaw",
-  "version": "0.2.1",
+  "version": "2.0.20",
   "description": "MetaClaw release installer and CLI bootstrapper",
   "license": "MIT",
   "author": "mianhuatang913",
@@ -31,6 +31,8 @@
     "INSTALL.md"
   ],
   "scripts": {
+    "dev:web": "npx wrangler pages dev site",
+    "deploy:web": "npx wrangler pages deploy site --project-name metaclaw",
     "install:local": "bash scripts/install.sh",
     "test": "node --test npm/bin/metaclaw-install.test.mjs",
     "test:coverage": "c8 npm test",

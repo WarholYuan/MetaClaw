@@ -15,6 +15,7 @@ MODEL_SETTINGS = {
     "proxy": "",  # openai使用的代理
     # chatgpt模型， 当use_azure_chatgpt为true时，其名称为Azure上model deployment名称
     "model": "gpt-3.5-turbo",  # 可选择: gpt-4o, pt-4o-mini, gpt-4-turbo, claude-3-sonnet, wenxin, moonshot, qwen-turbo, xunfei, glm-4, minimax, gemini等模型，全部可选模型详见common/const.py文件
+    "model_provider": "",  # Provider routing hint. Defaults to deepseek when unset.
     "bot_type": "",  # 可选配置，使用兼容openai格式的三方服务时候，需填"openai"或"custom"（custom模式下切换模型不会自动切换bot_type）。bot具体名称详见common/const.py文件，如不填根据model名称判断
     "use_azure_chatgpt": False,  # 是否使用azure的chatgpt
     "azure_deployment_id": "",  # azure 模型部署名称
@@ -101,6 +102,8 @@ MODEL_SETTINGS = {
     # 智谱AI 平台配置
     "zhipu_ai_api_key": "",
     "zhipu_ai_api_base": "https://open.bigmodel.cn/api/paas/v4",
+    "deepseek_api_key": "",
+    "deepseek_api_base": "https://api.deepseek.com/v1",
     "moonshot_api_key": "",
     "moonshot_base_url": "https://api.moonshot.cn/v1",
     # 豆包(火山方舟) 平台配置

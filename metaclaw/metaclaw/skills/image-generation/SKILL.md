@@ -10,7 +10,7 @@ metadata:
         - ARK_API_KEY
         - DASHSCOPE_API_KEY
         - MINIMAX_API_KEY
-        - LINKAI_API_KEY
+        - DEEPSEEK_API_KEY
 ---
 
 # Image Generation
@@ -102,7 +102,7 @@ On error:
 
 The script needs **at least one** of these API keys (set via `env_config` or `config.json`):
 
-`OPENAI_API_KEY` / `GEMINI_API_KEY` / `ARK_API_KEY` / `DASHSCOPE_API_KEY` / `MINIMAX_API_KEY` / `LINKAI_API_KEY`
+`OPENAI_API_KEY` / `GEMINI_API_KEY` / `ARK_API_KEY` / `DASHSCOPE_API_KEY` / `MINIMAX_API_KEY` / `DEEPSEEK_API_KEY`
 
 Each also has an optional `*_API_BASE` for custom endpoints. The script automatically picks the first configured backend and falls back to the next if it fails — no need to specify a model.
 

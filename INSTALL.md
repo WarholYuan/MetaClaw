@@ -24,6 +24,19 @@ Install browser support too:
 curl -fsSL https://raw.githubusercontent.com/WarholYuan/MetaClaw/main/scripts/install.sh | bash -s -- --browser
 ```
 
+## Optional OpenCLI Browser Automation
+
+MetaClaw can use OpenCLI as an optional Agent tool for browser automation through the user's existing Chrome session. It is not required for installation.
+
+Install and verify OpenCLI separately:
+
+```bash
+npm install -g @jackwener/opencli
+opencli doctor
+```
+
+`opencli doctor` should report that the daemon, Browser Bridge extension, and connectivity checks are OK. When OpenCLI is not available, MetaClaw simply skips the `opencli` Agent tool and continues with the rest of the toolset.
+
 ## npm
 
 From npm after publishing:
@@ -110,3 +123,5 @@ Publish npm package:
 ```bash
 npm publish --access public
 ```
+
+GitHub Release assets are uploaded separately from source control. Use the macOS one-click files from `dist/` as release attachments, and do not commit `dist/` into Git.

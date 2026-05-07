@@ -2,7 +2,7 @@
 Skill service for handling skill CRUD operations.
 
 This service provides a unified interface for managing skills, which can be
-called from the cloud control client (LinkAI), the local web console, or any
+called from the cloud control client (MetaClaw), the local web console, or any
 other management entry point.
 """
 

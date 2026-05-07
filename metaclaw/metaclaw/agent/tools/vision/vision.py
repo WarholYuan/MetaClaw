@@ -117,7 +117,7 @@ class Vision(BaseTool):
                 "Options:\n"
                 "  1. Switch to a multimodal model (e.g. qwen3.6-plus, claude-sonnet-4-6, gemini-2.0-flash)\n"
                 "  2. Configure OPENAI_API_KEY: env_config(action=\"set\", key=\"OPENAI_API_KEY\", value=\"your-key\")\n"
-                "  3. Configure LINKAI_API_KEY: env_config(action=\"set\", key=\"LINKAI_API_KEY\", value=\"your-key\")"
+                "  3. Configure DEEPSEEK_API_KEY: env_config(action=\"set\", key=\"DEEPSEEK_API_KEY\", value=\"your-key\")"
             )
 
         try:

@@ -253,7 +253,7 @@ fi
 # Check for updates before running (skip in test environments)
 if [[ "${METACLAW_SKIP_UPDATE_CHECK:-0}" != "1" ]]; then
   LATEST_TAG=$(git ls-remote --tags "${METACLAW_REPO_URL:-https://github.com/WarholYuan/MetaClaw.git}" 2>/dev/null | tail -1 | sed 's/.*refs\/tags\///' || echo "")
-  CURRENT_VERSION="0.2.0"  # Will be replaced during release
+  CURRENT_VERSION="2.0.20"
 
   if [[ -n "${LATEST_TAG:-}" && "$LATEST_TAG" != "v$CURRENT_VERSION" ]]; then
     echo -e "\033[1;33m⚠  New version available: $LATEST_TAG (current: v$CURRENT_VERSION)\033[0m"

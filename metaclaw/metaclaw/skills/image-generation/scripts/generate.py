@@ -6,7 +6,7 @@ Usage:
     python generate.py '<json_args>'
 
 Supported model families (each provider is tried in priority order:
-OpenAI → Gemini → Seedream → Qwen → MiniMax → LinkAI; missing API keys
+OpenAI → Gemini → Seedream → Qwen → MiniMax → MetaClaw; missing API keys
 are skipped, and the provider that natively owns the requested model is
 promoted to the front of the queue):
 
@@ -15,7 +15,7 @@ promoted to the front of the queue):
     - doubao-seedream-* / seedream-*               → Seedream (Volcengine Ark)
     - qwen-image-2.0 / qwen-image-2.0-pro / etc.   → Qwen (DashScope)
     - image-01 / minimax-image                     → MiniMax
-    - any model                                    → LinkAI (universal proxy)
+    - any model                                    → MetaClaw (universal proxy)
 
 Dependencies: requests (stdlib: json, sys, os, base64, io, abc, uuid, pathlib, urllib)
 """
@@ -351,11 +351,11 @@ class OpenAIProvider(ImageProvider):
 
 
 # ---------------------------------------------------------------------------
-# LinkAI provider (uses unified /v1/images/generations)
+# MetaClaw provider (uses unified /v1/images/generations)
 # ---------------------------------------------------------------------------
 
-class LinkAIProvider(ImageProvider):
-    """Provider for LinkAI unified image generation API."""
+class MetaClawProvider(ImageProvider):
+    """Provider for MetaClaw unified image generation API."""
 
     DEFAULT_MODEL = "gpt-image-2"
 
@@ -381,7 +381,7 @@ class LinkAIProvider(ImageProvider):
         }
         if quality:
             payload["quality"] = quality
-        # LinkAI accepts both pixel sizes (1024x1024) and tier shorthand (1K/2K/4K).
+        # MetaClaw accepts both pixel sizes (1024x1024) and tier shorthand (1K/2K/4K).
         # Pass through whatever the caller gave us; also forward aspect_ratio.
         if size:
             payload["size"] = size
@@ -1009,7 +1009,7 @@ _MODEL_PREFERRED_PROVIDER: list[tuple[tuple[str, ...], str]] = [
 ]
 
 # Default global priority when the model has no preferred provider.
-_DEFAULT_PROVIDER_ORDER = ["OpenAI", "Gemini", "Seedream", "Qwen", "MiniMax", "LinkAI"]
+_DEFAULT_PROVIDER_ORDER = ["OpenAI", "Gemini", "Seedream", "Qwen", "MiniMax", "MetaClaw"]
 
 
 def _preferred_provider(model: str) -> str | None:
@@ -1025,7 +1025,7 @@ def _build_providers(model: str) -> list[tuple[str, ImageProvider]]:
 
     Behaviour:
       1. All providers with a configured API key are added in the global
-         priority order: OpenAI → Gemini → Seedream → Qwen → MiniMax → LinkAI.
+         priority order: OpenAI → Gemini → Seedream → Qwen → MiniMax → MetaClaw.
       2. If `model` natively belongs to one of the providers AND that provider
          is configured, it is promoted to the front so it gets the first
          attempt with the right model id.
@@ -1040,7 +1040,7 @@ def _build_providers(model: str) -> list[tuple[str, ImageProvider]]:
         "Seedream": os.environ.get("ARK_API_KEY", ""),
         "Qwen": os.environ.get("DASHSCOPE_API_KEY", ""),
         "MiniMax": os.environ.get("MINIMAX_API_KEY", ""),
-        "LinkAI": os.environ.get("LINKAI_API_KEY", ""),
+        "MetaClaw": os.environ.get("DEEPSEEK_API_KEY", ""),
     }
     bases = {
         "OpenAI": os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
@@ -1048,7 +1048,7 @@ def _build_providers(model: str) -> list[tuple[str, ImageProvider]]:
         "Seedream": os.environ.get("ARK_API_BASE", "https://ark.cn-beijing.volces.com/api/v3"),
         "Qwen": os.environ.get("DASHSCOPE_API_BASE", "https://dashscope.aliyuncs.com"),
         "MiniMax": os.environ.get("MINIMAX_API_BASE", "https://api.minimaxi.com"),
-        "LinkAI": os.environ.get("LINKAI_API_BASE", "https://api.link-ai.tech"),
+        "MetaClaw": os.environ.get("DEEPSEEK_API_BASE", "https://api.link-ai.tech"),
     }
 
     pref = _preferred_provider(model)
@@ -1065,7 +1065,7 @@ def _build_providers(model: str) -> list[tuple[str, ImageProvider]]:
         "Seedream": SeedreamProvider,
         "Qwen": QwenProvider,
         "MiniMax": MinimaxProvider,
-        "LinkAI": LinkAIProvider,
+        "MetaClaw": MetaClawProvider,
     }
     available: dict[str, ImageProvider] = {}
     for label, key in keys.items():
@@ -1129,7 +1129,7 @@ def main():
                 f"No API key configured for {target}. "
                 "Set at least one of OPENAI_API_KEY / GEMINI_API_KEY / "
                 "ARK_API_KEY / DASHSCOPE_API_KEY / MINIMAX_API_KEY / "
-                "LINKAI_API_KEY via the env_config tool, then try again."
+                "DEEPSEEK_API_KEY via the env_config tool, then try again."
             )
         }, ensure_ascii=False))
         sys.exit(1)
@@ -1174,7 +1174,7 @@ def main():
                  "Do NOT retry with the same parameters. "
                  "Ask the user to verify their API key / base URL "
                  "(OPENAI_API_KEY, GEMINI_API_KEY, ARK_API_KEY, "
-                 "DASHSCOPE_API_KEY, MINIMAX_API_KEY, or LINKAI_API_KEY) "
+                 "DASHSCOPE_API_KEY, MINIMAX_API_KEY, or DEEPSEEK_API_KEY) "
                  "via env_config."
     }, ensure_ascii=False))
     sys.exit(1)

@@ -13,7 +13,8 @@ from cli.commands.install import install_browser
 from cli.commands.knowledge import knowledge
 from cli.commands.lark import lark
 from cli.commands.doctor import doctor_group
-from common.brand import APP_NAME, CLI_NAME
+from common.brand import APP_NAME, CLI_NAME, DEFAULT_ENV_FILE
+from config.migrations import MigrationError, run_pending_migrations
 
 
 HELP_TEXT = f"""Usage: {CLI_NAME} COMMAND [ARGS]...
@@ -23,10 +24,13 @@ HELP_TEXT = f"""Usage: {CLI_NAME} COMMAND [ARGS]...
 Commands:
   help     Show this message.
   version  Show the version.
+  init     Initialize local MetaClaw configuration.
   start    Start {APP_NAME}.
+  run      Run {APP_NAME}.
   stop     Stop {APP_NAME}.
   restart  Restart {APP_NAME}.
   update   Update {APP_NAME} to a version and restart.
+  upgrade  Upgrade {APP_NAME} to a version and restart.
   status   Show {APP_NAME} running status.
   logs     View {APP_NAME} logs.
   doctor   Manage Metadoctor (health monitor).
@@ -52,7 +56,7 @@ class MetaClawCLI(click.Group):
         return super().parse_args(ctx, args)
 
 
-@click.group(cls=MetaClawCLI, invoke_without_command=True, context_settings=dict(help_option_names=[]))
+@click.group(cls=MetaClawCLI, invoke_without_command=True, context_settings=dict(help_option_names=["--help", "-h"]))
 @click.pass_context
 def main(ctx):
     """CLI - Manage your agent instance."""
@@ -84,6 +88,73 @@ def setup():
     raise SystemExit(subprocess.call(["bash", script], env=os.environ.copy()))
 
 
+@main.command()
+def init():
+    """Initialize local MetaClaw configuration."""
+    env_file = os.path.expanduser(DEFAULT_ENV_FILE)
+    env_dir = os.path.dirname(env_file)
+    os.makedirs(env_dir, exist_ok=True)
+
+    template_keys = [
+        "DEEPSEEK_API_KEY",
+        "DOUBAO_API_KEY",
+        "MOONSHOT_API_KEY",
+        "OPENAI_API_KEY",
+    ]
+
+    existing = ""
+    if os.path.exists(env_file):
+        with open(env_file, "r", encoding="utf-8") as f:
+            existing = f.read()
+
+    lines = []
+    for key in template_keys:
+        if f"{key}=" not in existing:
+            lines.append(f"{key}=")
+
+    if lines:
+        mode = "a" if existing else "w"
+        with open(env_file, mode, encoding="utf-8") as f:
+            if existing and not existing.endswith("\n"):
+                f.write("\n")
+            f.write("\n".join(lines))
+            f.write("\n")
+
+    click.echo(f"{APP_NAME} initialized: {env_file}")
+
+
+@main.command()
+@click.option("--foreground", "-f", is_flag=True, help="Run in foreground (don't daemonize)")
+@click.option("--no-logs", is_flag=True, help="Don't tail logs after starting")
+@click.pass_context
+def run(ctx, foreground, no_logs):
+    """Run MetaClaw."""
+    ctx.invoke(start, foreground=foreground, no_logs=no_logs)
+
+
+@main.command()
+@click.argument("version", required=False)
+@click.option("--force", is_flag=True, help="Allow upgrade with local source changes")
+@click.option("--migrations-only", is_flag=True, help="Only run pending config migrations")
+@click.pass_context
+def upgrade(ctx, version, force, migrations_only):
+    """Upgrade and restart MetaClaw."""
+    try:
+        applied = run_pending_migrations()
+    except MigrationError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    if applied:
+        click.echo(f"Applied config migrations: {', '.join(applied)}")
+    else:
+        click.echo("No pending config migrations.")
+
+    if migrations_only:
+        return
+
+    ctx.invoke(update, version=version, force=force)
+
+
 main.add_command(skill)
 main.add_command(start)
 main.add_command(stop)
@@ -91,6 +162,7 @@ main.add_command(restart)
 main.add_command(update)
 main.add_command(status)
 main.add_command(logs)
+main.add_command(run)
 main.add_command(context)
 main.add_command(knowledge)
 main.add_command(lark)

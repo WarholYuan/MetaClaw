@@ -16,7 +16,7 @@ Install skills from multiple sources via chat (`/skill`) or terminal (`metaclaw 
 /skill install <name>                   # From Skill Hub
 /skill install <owner>/<repo>           # From GitHub
 /skill install clawhub:<name>           # From ClawHub
-/skill install linkai:<code>            # From LinkAI
+/skill install metaclaw:<code>            # From MetaClaw
 /skill install <url>                    # From URL (zip or SKILL.md)
 ```
 
@@ -47,6 +47,8 @@ skills/
     scripts/          # Optional: bundled scripts
     resources/        # Optional: reference files
 ```
+
+Bundled skills include OpenCLI companion skills (`smart-search`, `opencli-usage`, `opencli-browser`, `opencli-adapter-author`, and `opencli-autofix`) for users who have the optional `opencli` binary installed.
 
 `SKILL.md` uses YAML frontmatter:
 

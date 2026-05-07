@@ -5,7 +5,6 @@ CHATGPT = "chatGPT"  # legacy alias for OPENAI, kept for backward compatibility
 BAIDU = "baidu"
 XUNFEI = "xunfei"
 CHATGPTONAZURE = "chatGPTOnAzure"
-LINKAI = "linkai"  # 已废弃，仅保留常量避免旧配置报错
 CLAUDEAPI= "claudeAPI"
 QWEN = "qwen"  # 千问 (兼容旧配置，实际走 DashscopeBot)
 QWEN_DASHSCOPE = "dashscope"  # 千问 DashScope 接入
@@ -139,7 +138,6 @@ QWEN3_5_27B = "Qwen/Qwen3.5-27B"
 WEN_XIN = "wenxin"
 WEN_XIN_4 = "wenxin-4"
 XUNFEI = "xunfei"
-# LINKAI model entries removed — LinkAI plugin deprecated
 MODELSCOPE = "modelscope"
 
 GITEE_AI_MODEL_LIST = ["Yi-34B-Chat", "InternVL2-8B", "deepseek-coder-33B-instruct", "InternVL2.5-26B", "Qwen2-VL-72B", "Qwen2.5-32B-Instruct", "glm-4-9b-chat", "codegeex4-all-9b", "Qwen2.5-Coder-32B-Instruct", "Qwen2.5-72B-Instruct", "Qwen2.5-7B-Instruct", "Qwen2-72B-Instruct", "Qwen2-7B-Instruct", "code-raccoon-v1", "Qwen2.5-14B-Instruct"]

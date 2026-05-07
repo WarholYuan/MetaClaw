@@ -14,7 +14,7 @@
   <a href="https://docs.metaclaw.ai/en/intro/index">📖 Docs</a> &nbsp;·&nbsp;
   <a href="https://docs.metaclaw.ai/en/guide/quick-start">🚀 Quick Start</a> &nbsp;·&nbsp;
   <a href="https://skills.metaclaw.ai/">🧩 Skill Hub</a> &nbsp;·&nbsp;
-  <a href="https://link-ai.tech/metaclaw/create">☁️ Try Online</a>
+  <a href="https://metaclaw.tech/metaclaw/create">☁️ Try Online</a>
 </p>
 
 ## Introduction
@@ -39,7 +39,7 @@
 
 ## Demo
 
-Try online (no deployment needed): [MetaClaw](https://link-ai.tech/metaclaw/create)
+Try online (no deployment needed): [MetaClaw](https://metaclaw.tech/metaclaw/create)
 
 ## Changelog
 
@@ -69,12 +69,12 @@ The project provides a one-click script for installation, configuration, startup
 
 **Linux / macOS:**
 ```bash
-bash <(curl -fsSL https://cdn.link-ai.tech/code/metaclaw/run.sh)
+bash <(curl -fsSL https://cdn.metaclaw.tech/code/metaclaw/run.sh)
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://cdn.link-ai.tech/code/metaclaw/run.ps1 | iex
+irm https://cdn.metaclaw.tech/code/metaclaw/run.ps1 | iex
 ```
 
 After running, the Web service starts by default. Access `http://localhost:9899/chat` to chat.
@@ -150,7 +150,7 @@ nohup python3 app.py & tail -f nohup.out
 ### Docker Deployment
 
 ```bash
-curl -O https://cdn.link-ai.tech/code/metaclaw/docker-compose.yml
+curl -O https://cdn.metaclaw.tech/code/metaclaw/docker-compose.yml
 # Edit docker-compose.yml with your config
 sudo docker compose up -d
 sudo docker logs -f metaclaw
@@ -221,9 +221,9 @@ Multiple channels can be enabled simultaneously, separated by commas: `"channel_
 
 ## Enterprise Services
 
-<a href="https://link-ai.tech" target="_blank"><img width="720" src="https://cdn.link-ai.tech/image/link-ai-intro.jpg"></a>
+<a href="https://metaclaw.tech" target="_blank"><img width="720" src="https://cdn.metaclaw.tech/image/metaclaw-intro.jpg"></a>
 
-> [LinkAI](https://link-ai.tech/) is a one-stop AI agent platform for enterprises and developers, integrating multimodal LLMs, knowledge bases, Agent plugins, and workflows. Supports one-click integration with mainstream platforms, SaaS and private deployment.
+> [MetaClaw](https://metaclaw.tech/) is a one-stop AI agent platform for enterprises and developers, integrating multimodal LLMs, knowledge bases, Agent plugins, and workflows. Supports one-click integration with mainstream platforms, SaaS and private deployment.
 
 <br/>
 

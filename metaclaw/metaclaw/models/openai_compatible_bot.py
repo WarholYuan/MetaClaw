@@ -4,7 +4,7 @@
 OpenAI-Compatible Bot Base Class
 
 Provides a common implementation for bots that are compatible with OpenAI's API format.
-This includes: OpenAI, LinkAI, Azure OpenAI, and many third-party providers.
+This includes: OpenAI, MetaClaw, Azure OpenAI, and many third-party providers.
 """
 
 import json
@@ -18,23 +18,23 @@ from agent.protocol.message_utils import drop_orphaned_tool_results_openai
 class OpenAICompatibleBot:
     """
     Base class for OpenAI-compatible bots.
-    
+
     Provides common tool calling implementation that can be inherited by:
     - ChatGPTBot
-    - LinkAIBot  
+    - MetaClawBot
     - OpenAIBot
     - AzureChatGPTBot
     - Other OpenAI-compatible providers
-    
+
     Subclasses only need to override get_api_config() to provide their specific API settings.
     """
-    
+
     def get_api_config(self):
         """
         Get API configuration for this bot.
-        
+
         Subclasses should override this to provide their specific config.
-        
+
         Returns:
             dict: {
                 'api_key': str,
@@ -47,37 +47,37 @@ class OpenAICompatibleBot:
             }
         """
         raise NotImplementedError("Subclasses must implement get_api_config()")
-    
+
     def call_with_tools(self, messages, tools=None, stream=False, **kwargs):
         """
         Call OpenAI-compatible API with tool support for agent integration
-        
+
         This method handles:
         1. Format conversion (Claude format → OpenAI format)
         2. System prompt injection
         3. API calling with proper configuration
         4. Error handling
-        
+
         Args:
             messages: List of messages (may be in Claude format from agent)
             tools: List of tool definitions (may be in Claude format from agent)
             stream: Whether to use streaming
             **kwargs: Additional parameters (max_tokens, temperature, system, etc.)
-            
+
         Returns:
             Formatted response in OpenAI format or generator for streaming
         """
         try:
             # Get API configuration from subclass
             api_config = self.get_api_config()
-            
+
             # Convert messages from Claude format to OpenAI format
             messages = self._convert_messages_to_openai_format(messages)
-            
+
             # Convert tools from Claude format to OpenAI format
             if tools:
                 tools = self._convert_tools_to_openai_format(tools)
-            
+
             # Handle system prompt (OpenAI uses system message, Claude uses separate parameter)
             system_prompt = kwargs.get('system')
             if system_prompt:
@@ -87,7 +87,7 @@ class OpenAICompatibleBot:
                 else:
                     # Replace existing system message
                     messages[0] = {"role": "system", "content": system_prompt}
-            
+
             # Build request parameters
             request_params = {
                 "model": kwargs.get("model", api_config.get('model', 'gpt-3.5-turbo')),
@@ -98,25 +98,25 @@ class OpenAICompatibleBot:
                 "presence_penalty": kwargs.get("presence_penalty", api_config.get('default_presence_penalty', 0.0)),
                 "stream": stream
             }
-            
+
             # Add max_tokens if specified
             if kwargs.get("max_tokens"):
                 request_params["max_tokens"] = kwargs["max_tokens"]
-            
+
             # Add tools if provided
             if tools:
                 request_params["tools"] = tools
                 request_params["tool_choice"] = kwargs.get("tool_choice", "auto")
-            
+
             # Make API call with proper configuration
             api_key = api_config.get('api_key')
             api_base = api_config.get('api_base')
-            
+
             if stream:
                 return self._handle_stream_response(request_params, api_key, api_base)
             else:
                 return self._handle_sync_response(request_params, api_key, api_base)
-                
+
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
             error_msg = f"Network error: {type(e).__name__}"
             logger.error(f"[{self.__class__.__name__}] call_with_tools network error: {e}")
@@ -185,7 +185,7 @@ class OpenAICompatibleBot:
                     "message": error_msg,
                     "status_code": 500
                 }
-    
+
     def _handle_sync_response(self, request_params, api_key, api_base):
         """Handle synchronous OpenAI API response"""
         try:
@@ -195,10 +195,10 @@ class OpenAICompatibleBot:
                 kwargs["api_key"] = api_key
             if api_base:
                 kwargs["api_base"] = api_base
-            
+
             response = openai.ChatCompletion.create(**kwargs)
             return response
-            
+
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
             logger.error(f"[{self.__class__.__name__}] sync network error: {e}")
             return {
@@ -227,7 +227,7 @@ class OpenAICompatibleBot:
                 "message": str(e),
                 "status_code": 500
             }
-    
+
     def _handle_stream_response(self, request_params, api_key, api_base):
         """Handle streaming OpenAI API response"""
         try:
@@ -237,13 +237,13 @@ class OpenAICompatibleBot:
                 kwargs["api_key"] = api_key
             if api_base:
                 kwargs["api_base"] = api_base
-            
+
             stream = openai.ChatCompletion.create(**kwargs)
-            
+
             # Stream chunks to caller
             for chunk in stream:
                 yield chunk
-                
+
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
             logger.error(f"[{self.__class__.__name__}] stream network error: {e}")
             yield {
@@ -272,17 +272,17 @@ class OpenAICompatibleBot:
                 "message": str(e),
                 "status_code": 500
             }
-    
+
     def _convert_tools_to_openai_format(self, tools):
         """
         Convert tools from Claude format to OpenAI format
-        
+
         Claude format: {name, description, input_schema}
         OpenAI format: {type: "function", function: {name, description, parameters}}
         """
         if not tools:
             return None
-        
+
         openai_tools = []
         for tool in tools:
             # Check if already in OpenAI format
@@ -298,30 +298,30 @@ class OpenAICompatibleBot:
                         "parameters": tool.get("input_schema", {})
                     }
                 })
-        
+
         return openai_tools
-    
+
     def _convert_messages_to_openai_format(self, messages):
         """
         Convert messages from Claude format to OpenAI format
-        
+
         Claude uses content blocks with types like 'tool_use', 'tool_result'
         OpenAI uses 'tool_calls' in assistant messages and 'tool' role for results
         """
         if not messages:
             return []
-        
+
         openai_messages = []
-        
+
         for msg in messages:
             role = msg.get("role")
             content = msg.get("content")
-            
+
             # Handle string content (already in correct format)
             if isinstance(content, str):
                 openai_messages.append(msg)
                 continue
-            
+
             # Handle list content (Claude format with content blocks)
             if isinstance(content, list):
                 # Check if this is a tool result message (user role with tool_result blocks)

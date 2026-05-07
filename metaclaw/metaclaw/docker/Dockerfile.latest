@@ -3,7 +3,7 @@ FROM python:3.10-slim-bullseye
 LABEL maintainer="foo@bar.com"
 ARG TZ='Asia/Shanghai'
 
-ARG CHATGPT_ON_WECHAT_VER
+ARG METACLAW_VERSION
 # Set to "false" to skip Playwright/Chromium and produce a smaller image
 ARG INSTALL_BROWSER=true
 # Set to "true" to use China mirrors for apt / pip / playwright (faster in CN)

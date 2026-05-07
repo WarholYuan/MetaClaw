@@ -2,7 +2,7 @@
 Memory service for handling memory query operations via cloud protocol.
 
 Provides a unified interface for listing and reading memory files,
-callable from the cloud client (LinkAI) or a future web console.
+callable from the cloud client (MetaClaw) or a future web console.
 
 Memory file layout (under workspace_root):
     MEMORY.md               -> type: global

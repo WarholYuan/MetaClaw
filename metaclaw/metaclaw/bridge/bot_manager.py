@@ -30,10 +30,14 @@ def resolve_bot_type(model_name: str, *, use_azure: bool = False) -> str:
     # User-configured explicit bot_type takes priority
     configured = conf().get("bot_type")
     if configured:
-        return configured
+        return _normalize_provider(configured)
+
+    provider = conf().get("model_provider") or "deepseek"
+    if provider:
+        return _normalize_provider(provider)
 
     if not model_name or not isinstance(model_name, str):
-        return const.OPENAI
+        return const.DEEPSEEK
 
     # Legacy special cases
     if model_name in ["text-davinci-003"]:
@@ -81,4 +85,20 @@ def resolve_bot_type(model_name: str, *, use_azure: bool = False) -> str:
         if model_name.startswith(prefix):
             return btype
 
-    return const.OPENAI
+    return const.DEEPSEEK
+
+
+def _normalize_provider(provider: str) -> str:
+    normalized = str(provider).strip().lower()
+    aliases = {
+        "deepseek": const.DEEPSEEK,
+        "doubao": const.DOUBAO,
+        "moonshot": const.MOONSHOT,
+        "kimi": const.MOONSHOT,
+        "openai": const.OPENAI,
+        "open_ai": const.OPENAI,
+        "openai-compatible": const.OPENAI,
+        "chatgpt": const.OPENAI,
+        "custom": const.CUSTOM,
+    }
+    return aliases.get(normalized, provider)

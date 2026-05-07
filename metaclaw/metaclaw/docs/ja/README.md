@@ -14,7 +14,7 @@
   <a href="https://docs.metaclaw.ai/en/intro/index">📖 ドキュメント</a> &nbsp;·&nbsp;
   <a href="https://docs.metaclaw.ai/en/guide/quick-start">🚀 クイックスタート</a> &nbsp;·&nbsp;
   <a href="https://skills.metaclaw.ai/">🧩 Skill Hub</a> &nbsp;·&nbsp;
-  <a href="https://link-ai.tech/metaclaw/create">☁️ オンラインで試す</a>
+  <a href="https://metaclaw.tech/metaclaw/create">☁️ オンラインで試す</a>
 </p>
 
 ## はじめに
@@ -39,7 +39,7 @@
 
 ## デモ
 
-オンラインで試す（デプロイ不要）: [MetaClaw](https://link-ai.tech/metaclaw/create)
+オンラインで試す（デプロイ不要）: [MetaClaw](https://metaclaw.tech/metaclaw/create)
 
 ## 更新履歴
 
@@ -69,12 +69,12 @@
 
 **Linux / macOS:**
 ```bash
-bash <(curl -fsSL https://cdn.link-ai.tech/code/metaclaw/run.sh)
+bash <(curl -fsSL https://cdn.metaclaw.tech/code/metaclaw/run.sh)
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://cdn.link-ai.tech/code/metaclaw/run.ps1 | iex
+irm https://cdn.metaclaw.tech/code/metaclaw/run.ps1 | iex
 ```
 
 実行後、デフォルトでWebサービスが起動します。`http://localhost:9899/chat` にアクセスしてチャットを開始できます。
@@ -150,7 +150,7 @@ nohup python3 app.py & tail -f nohup.out
 ### Dockerデプロイ
 
 ```bash
-curl -O https://cdn.link-ai.tech/code/metaclaw/docker-compose.yml
+curl -O https://cdn.metaclaw.tech/code/metaclaw/docker-compose.yml
 # docker-compose.yml を編集して設定を記入
 sudo docker compose up -d
 sudo docker logs -f metaclaw
@@ -221,9 +221,9 @@ Coding Planは各プロバイダーが提供する月額サブスクリプショ
 
 ## エンタープライズサービス
 
-<a href="https://link-ai.tech" target="_blank"><img width="720" src="https://cdn.link-ai.tech/image/link-ai-intro.jpg"></a>
+<a href="https://metaclaw.tech" target="_blank"><img width="720" src="https://cdn.metaclaw.tech/image/metaclaw-intro.jpg"></a>
 
-> [LinkAI](https://link-ai.tech/) は、企業や開発者向けのワンストップAIエージェントプラットフォームです。マルチモーダルLLM、ナレッジベース、Agentプラグイン、ワークフローを統合しています。主要プラットフォームへのワンクリック統合、SaaSおよびプライベートデプロイに対応しています。
+> [MetaClaw](https://metaclaw.tech/) は、企業や開発者向けのワンストップAIエージェントプラットフォームです。マルチモーダルLLM、ナレッジベース、Agentプラグイン、ワークフローを統合しています。主要プラットフォームへのワンクリック統合、SaaSおよびプライベートデプロイに対応しています。
 
 <br/>
 

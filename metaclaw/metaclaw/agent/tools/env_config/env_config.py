@@ -19,7 +19,7 @@ API_KEY_REGISTRY = {
     "OPENAI_API_KEY": "OpenAI API 密钥 (用于GPT模型、Embedding模型)",
     "GEMINI_API_KEY": "Google Gemini API 密钥",
     "CLAUDE_API_KEY": "Claude API 密钥 (用于Claude模型)",
-    "LINKAI_API_KEY": "LinkAI智能体平台 API 密钥，支持多种模型切换",
+    "DEEPSEEK_API_KEY": "DeepSeek API 密钥",
     # 搜索服务
     "BOCHA_API_KEY": "博查 AI 搜索 API 密钥 ",
 }
@@ -52,7 +52,7 @@ class EnvConfig(BaseTool):
                     "- OPENAI_API_BASE: OpenAI API base URL\n"
                     "- CLAUDE_API_KEY: Anthropic Claude API\n"
                     "- GEMINI_API_KEY: Google Gemini API\n"
-                    "- LINKAI_API_KEY: LinkAI platform\n"
+                    "- DEEPSEEK_API_KEY: DeepSeek API\n"
                     "- BOCHA_API_KEY: Bocha AI search (博查搜索)\n"
                     "Use exact key names (case-sensitive, all uppercase with underscores)"
                 )

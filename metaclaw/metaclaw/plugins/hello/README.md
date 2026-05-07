@@ -23,7 +23,7 @@
 
   "patpat_prompt": "请你随机使用一种风格介绍你自己，并告诉用户输入#help可以查看帮助信息。",  ## 群内拍一拍的提示词
  
-  "use_character_desc": false     ## 是否在Hello插件中使用LinkAI应用的系统设定
+  "use_character_desc": false     ## 是否在Hello插件中使用MetaClaw应用的系统设定
 }
 ```
 
@@ -33,7 +33,7 @@
  - 设置全局的用户进群固定欢迎语，可以在***项目根目录下***的`config.json`文件里，可以添加参数`"group_welcome_msg": "" `
  - 为每个群设置固定的欢迎语，可以在`"group_welc_fixed_msg": {}`配置群聊名和对应的固定欢迎语，优先级高于全局固定欢迎语
  - 如果没有配置以上两个参数，则使用随机欢迎语，如需设定风格，语言等，修改`"group_welc_prompt": `即可
- - 如果使用LinkAI的服务，想在随机欢迎中结合LinkAI应用的设定，配置`"use_character_desc": true `
+ - 如果使用MetaClaw的服务，想在随机欢迎中结合MetaClaw应用的设定，配置`"use_character_desc": true `
  - 实际 `config.json` 配置中应保证json格式，不应携带 '#' 及后面的注释
  - 如果是`docker`部署，可通过映射 `plugins/config.json` 到容器中来完成插件配置
 

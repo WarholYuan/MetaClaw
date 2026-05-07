@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metaclaw"
-version = "2.0.10"
-description = "MetaClaw - AI Agent on WeChat and more"
+version = "2.0.20"
+description = "MetaClaw - Multi-Platform AI Agent"
 requires-python = ">=3.7,<3.14"
 dependencies = [
     "aiohttp>=3.8.6,<3.10",
@@ -65,8 +65,12 @@ all = [
 [project.scripts]
 metaclaw = "cli.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/WarholYuan/metaclaw"
+Repository = "https://github.com/WarholYuan/metaclaw"
+
 [tool.setuptools]
-py-modules = ["app", "config"]
+py-modules = ["app"]
 
 [tool.setuptools.packages.find]
 namespaces = true
@@ -76,6 +80,7 @@ include = [
     "channel*",
     "cli*",
     "common*",
+    "config*",
     "doctor*",
     "models*",
     "plugins*",
@@ -85,3 +90,4 @@ include = [
 
 [tool.setuptools.package-data]
 cli = ["VERSION"]
+plugins = ["examples/weather/*.json", "examples/weather/*.md"]

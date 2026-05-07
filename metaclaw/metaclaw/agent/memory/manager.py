@@ -50,7 +50,7 @@ class MemoryManager:
             overlap_tokens=self.config.chunk_overlap_tokens
         )
         
-        # Initialize embedding provider (optional, prefer OpenAI, fallback to LinkAI)
+        # Initialize embedding provider (optional, prefer OpenAI, fallback to MetaClaw)
         self.embedding_provider = None
         if embedding_provider:
             self.embedding_provider = embedding_provider

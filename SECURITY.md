@@ -4,10 +4,10 @@
 
 | Version | Supported |
 |---------|-----------|
-| 0.2.x   | ✅        |
-| < 0.2   | ❌        |
+| 2.x     | ✅        |
+| < 2.0   | ❌        |
 
-Only the latest 0.2.x is supported. When 1.0 ships, this table will be updated.
+Only the latest 2.x release is supported.
 
 ## Reporting a Vulnerability
 

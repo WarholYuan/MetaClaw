@@ -1,0 +1,30 @@
+{
+  "name": "weather",
+  "version": "0.1.0",
+  "description": "Example plugin that demonstrates a simple weather integration manifest.",
+  "entrypoint": "weather.py:WeatherPlugin",
+  "permissions": {
+    "filesystem": false,
+    "shell": false,
+    "browser": false,
+    "web_search": true,
+    "opencli": false
+  },
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "default_location": {
+        "type": "string",
+        "description": "Fallback location used when a user does not provide one."
+      },
+      "units": {
+        "type": "string",
+        "enum": ["metric", "imperial"],
+        "default": "metric"
+      }
+    },
+    "additionalProperties": false
+  },
+  "author": "MetaClaw",
+  "homepage": "https://github.com/WarholYuan/metaclaw"
+}

@@ -1,18 +1,18 @@
 ---
 name: blue-ocean-research
 description: >
-  小红书/社交电商赛道双向验证研究。依赖 web-access skill 的联网策略调度能力，通过 browser/web_fetch/vision 获取多平台数据，输出飞书报告。
+  小红书/社交电商赛道双向验证研究。依赖 browser-use skill 的联网策略调度能力，通过 browser/web_fetch/vision 获取多平台数据，输出飞书报告。
   触发场景：(1) 用户给品类词/方向词，想找蓝海机会；(2) 用户给具体品名，想验证机会。
-  流程强制：web-access 锁定平台 → 采集 → 分析 → 报告末尾必须输出「蓝海性质」五级判定与下一步动作。
+  流程强制：browser-use 锁定平台 → 采集 → 分析 → 报告末尾必须输出「蓝海性质」五级判定与下一步动作。
 metadata:
   version: "3.0.0"
   requires:
-    skills: [web-access]
+    skills: [browser-use]
 ---
 
 # 蓝海市场探索
 
-本 skill 依赖 web-access 的联网策略调度能力完成数据采集。执行前必须先加载 web-access skill 并遵循其浏览哲学。
+本 skill 依赖 browser-use 的联网策略调度能力完成数据采集。执行前必须先加载 browser-use skill 并遵循其浏览哲学。
 
 ## 平台分工
 
@@ -28,7 +28,7 @@ metadata:
 | 灰猫数据 | 小红书商业化数据（核心） | browser | 商品榜单、达人搜索、直播数据 |
 | 亚马逊 | 跨境/全球需求验证 | browser/web_fetch | 搜索页或 Movers & Shakers |
 
-采集前先确认目标网站，检查 web-access 的 `references/site-patterns/` 下是否有匹配站点的经验文件。有先验知识时优先遵循。
+采集前先确认目标网站，检查 browser-use 的 `references/site-patterns/` 下是否有匹配站点的经验文件。有先验知识时优先遵循。
 
 ## 触发识别
 
@@ -72,7 +72,7 @@ metadata:
 4. 必须等用户回复“继续”再进入下一步
 ```
 
-**登录判断核心原则**（来自 web-access）：**目标内容拿到了吗？** 打开页面先尝试获取内容，确认目标无法获取且判断登录能解决时才告知用户。
+**登录判断核心原则**（来自 browser-use）：**目标内容拿到了吗？** 打开页面先尝试获取内容，确认目标无法获取且判断登录能解决时才告知用户。
 
 ---
 
@@ -478,7 +478,7 @@ browser evaluate → 提取评论内容（看"效果"“避坑"反馈）
 
 ## 执行注意事项
 
-1. **必须先加载 web-access skill**：所有联网操作通过 web-access 的工具选择策略执行，不要自己决定用什么工具。
+1. **必须先加载 browser-use skill**：所有联网操作通过 browser-use 的工具选择策略执行，不要自己决定用什么工具。
 2. **平台间必须串行**：browser 操作走的是同一 Chrome 实例，并发会触发风控/竞态。多个平台一定要串行采集。
 3. **关键词精准**：用具体品类词而非大词（"益生菌"而非"保健品"）。
 4. **社媒评论要抓**：高互动笔记的评论区是最真实的用户需求信号。

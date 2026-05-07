@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.0.20 (2026-05-06)
+
+### Features
+
+* add OpenCLI as a verified optional Agent browser automation tool
+* bundle OpenCLI companion skills including smart-search, usage, browser, adapter authoring, and autofix guidance
+* publish MetaClaw as a unified 2.0.20 release across npm, CLI, and Python metadata
+
+### Bug Fixes
+
+* preserve active web chat streams on session switch
+* store generated files in workspace tmp by default
+* generate GitHub Release notes from both bracketed and unbracketed changelog headings
+
+### Documentation
+
+* document OpenCLI setup and verification requirements
+* document Release assets policy for macOS one-click artifacts
+* update security support policy for 2.x releases
+
 ## 0.2.0 (2026-05-01)
 
 

@@ -19,6 +19,8 @@ config.yaml
 user_datas.pkl
 chatgpt_tool_hub/
 plugins/**/
+!plugins/examples/
+!plugins/examples/**/
 !plugins/bdunit
 !plugins/dungeon
 !plugins/finish

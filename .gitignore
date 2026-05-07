@@ -34,6 +34,11 @@ config.json
 node_modules/
 
 # Build artifacts
+dist/
 *.tgz
 node_modules/
 coverage/
+
+# Local/raw documentation captures may contain account identifiers or partial keys
+docs/images/**/*raw*.png
+docs/images/**/*opencli*.png

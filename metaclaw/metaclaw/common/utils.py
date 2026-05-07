@@ -119,7 +119,7 @@ def expand_path(path: str) -> str:
 
 def get_cloud_headers(api_key: str) -> dict:
     """
-    Build standard headers for LinkAI API requests,
+    Build standard headers for MetaClaw API requests,
     including client_id when available.
     """
     headers = {

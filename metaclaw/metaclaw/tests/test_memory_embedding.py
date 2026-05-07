@@ -54,7 +54,7 @@ def test_cache_different_providers(cache):
     cache.put("hello", "openai", "small", emb)
 
     # Different provider should miss
-    result = cache.get("hello", "linkai", "small")
+    result = cache.get("hello", "legacy_provider", "small")
     assert result is None
 
 
@@ -102,7 +102,7 @@ def test_cache_key_unique():
     """Different inputs produce different keys."""
     k1 = EmbeddingCache._compute_key("a", "openai", "small")
     k2 = EmbeddingCache._compute_key("b", "openai", "small")
-    k3 = EmbeddingCache._compute_key("a", "linkai", "small")
+    k3 = EmbeddingCache._compute_key("a", "legacy_provider", "small")
     assert k1 != k2
     assert k1 != k3
 
@@ -128,10 +128,10 @@ def test_factory_openai_empty_key():
         create_embedding_provider(provider="openai", api_key="")
 
 
-def test_factory_linkai_rejected():
-    """Factory rejects deprecated linkai provider."""
-    with pytest.raises(ValueError, match="Unsupported embedding provider: linkai"):
-        create_embedding_provider(provider="linkai", api_key="sk-test")
+def test_factory_legacy_provider_rejected():
+    """Factory rejects unsupported legacy providers."""
+    with pytest.raises(ValueError, match="Unsupported embedding provider: legacy_provider"):
+        create_embedding_provider(provider="legacy_provider", api_key="sk-test")
 
 
 def test_factory_default_model():

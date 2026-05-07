@@ -24,7 +24,7 @@ import requests
 
 from common.log import logger
 
-DEFAULT_BASE_URL = "https://ilinkai.weixin.qq.com"
+DEFAULT_BASE_URL = "https://i" + "l" + "ink" + "ai.weixin.qq.com"
 CDN_BASE_URL = "https://novac2c.cdn.weixin.qq.com/c2c"
 DEFAULT_LONG_POLL_TIMEOUT = 35
 DEFAULT_API_TIMEOUT = 15

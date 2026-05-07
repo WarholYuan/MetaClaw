@@ -890,13 +890,6 @@ class ConfigHandler:
             "api_base_default": None,
             "models": [const.QWEN3_5_27B, const.QWEN3_235B_A22B_INSTRUCT_2507],
         }),
-        ("linkai", {
-            "label": "LinkAI",
-            "api_key_field": "linkai_api_key",
-            "api_base_key": None,
-            "api_base_default": None,
-            "models": _RECOMMENDED_MODELS,
-        }),
         ("custom", {
             "label": "自定义",
             "api_key_field": "custom_api_key",
@@ -907,12 +900,12 @@ class ConfigHandler:
     ])
 
     EDITABLE_KEYS = {
-        "model", "bot_type", "use_linkai",
+        "model", "bot_type",
         "open_ai_api_base", "deepseek_api_base", "claude_api_base", "gemini_api_base",
         "zhipu_ai_api_base", "moonshot_base_url", "ark_base_url", "custom_api_base",
         "open_ai_api_key", "deepseek_api_key", "claude_api_key", "gemini_api_key",
         "zhipu_ai_api_key", "dashscope_api_key", "moonshot_api_key",
-        "ark_api_key", "minimax_api_key", "linkai_api_key", "custom_api_key",
+        "ark_api_key", "minimax_api_key", "custom_api_key",
         "agent_max_context_tokens", "agent_max_context_turns", "agent_max_steps",
         "enable_thinking", "web_password",
     }
@@ -962,7 +955,6 @@ class ConfigHandler:
                 "title": title,
                 "model": local_config.get("model", ""),
                 "bot_type": "openai" if local_config.get("bot_type") == "chatGPT" else local_config.get("bot_type", ""),
-                "use_linkai": bool(local_config.get("use_linkai", False)),
                 "channel_type": local_config.get("channel_type", ""),
                 "agent_max_context_tokens": local_config.get("agent_max_context_tokens", 50000),
                 "agent_max_context_turns": local_config.get("agent_max_context_turns", 20),
@@ -993,7 +985,7 @@ class ConfigHandler:
                     continue
                 if key in ("agent_max_context_tokens", "agent_max_context_turns", "agent_max_steps"):
                     value = int(value)
-                if key in ("use_linkai", "enable_thinking"):
+                if key in ("enable_thinking",):
                     value = bool(value)
                 local_config[key] = value
                 applied[key] = value

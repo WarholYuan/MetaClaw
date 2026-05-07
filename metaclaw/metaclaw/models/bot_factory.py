@@ -2,6 +2,40 @@
 channel factory
 """
 from common import const
+from config import conf
+
+
+_PROVIDER_KEY_REQUIREMENTS = {
+    const.DEEPSEEK: ("deepseek_api_key", "DEEPSEEK_API_KEY"),
+    const.DOUBAO: ("ark_api_key", "DOUBAO_API_KEY"),
+    const.MOONSHOT: ("moonshot_api_key", "MOONSHOT_API_KEY"),
+    const.OPENAI: ("open_ai_api_key", "OPENAI_API_KEY"),
+    const.CHATGPT: ("open_ai_api_key", "OPENAI_API_KEY"),
+    const.OPEN_AI: ("open_ai_api_key", "OPENAI_API_KEY"),
+}
+
+
+def _normalize_bot_type(bot_type):
+    normalized = str(bot_type or "").strip().lower()
+    aliases = {
+        "deepseek": const.DEEPSEEK,
+        "doubao": const.DOUBAO,
+        "moonshot": const.MOONSHOT,
+        "kimi": const.MOONSHOT,
+        "openai": const.OPENAI,
+        "open_ai": const.OPENAI,
+        "chatgpt": const.OPENAI,
+    }
+    return aliases.get(normalized, bot_type)
+
+
+def _require_provider_api_key(bot_type):
+    requirement = _PROVIDER_KEY_REQUIREMENTS.get(bot_type)
+    if not requirement:
+        return
+    conf_key, env_key = requirement
+    if not conf().get(conf_key):
+        raise RuntimeError(f"Set {env_key} in ~/.metaclaw/.env")
 
 
 def create_bot(bot_type):
@@ -10,6 +44,9 @@ def create_bot(bot_type):
     :param bot_type: bot type code
     :return: bot instance
     """
+    bot_type = _normalize_bot_type(bot_type)
+    _require_provider_api_key(bot_type)
+
     if bot_type == const.BAIDU:
         # 替换Baidu Unit为Baidu文心千帆对话接口
         # from models.baidu.baidu_unit_bot import BaiduUnitBot

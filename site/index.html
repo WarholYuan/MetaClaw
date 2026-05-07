@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="运动营养 AI 超级蓝海洞察师，基于 MetaClaw 技术底座，为品牌打造 7×24 小时在线的市场情报总监。">
+    <meta name="theme-color" content="#F7F3ED">
+    <title>运动营养 AI 超级蓝海洞察师 | 方案手册</title>
+    <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f7f3ed;
+        --cream: #fdfbf7;
+        --surface: #ffffff;
+        --ink: #1a1a1a;
+        --soft-ink: #3d3d3d;
+        --muted: #7a7570;
+        --gold: #b8956a;
+        --gold-light: #d4b896;
+        --gold-dark: #8a6f4b;
+        --burgundy: #6b2d3c;
+        --burgundy-soft: #8b4557;
+        --border: #e5ddd3;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --serif: "Noto Serif SC", "Cormorant Garamond", serif;
+        --display: "Cormorant Garamond", "Noto Serif SC", serif;
+        --sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        font-size: 16px;
+      }
+
+      body {
+        min-width: 320px;
+        overflow-x: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.85;
+        letter-spacing: 0.02em;
+      }
+
+      ::selection {
+        background: var(--gold);
+        color: var(--cream);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: var(--serif);
+        font-weight: 600;
+        line-height: 1.32;
+        letter-spacing: 0.04em;
+      }
+
+      .container {
+        width: min(1200px, calc(100% - 4rem));
+        margin: 0 auto;
+      }
+
+      .container-narrow {
+        width: min(820px, calc(100% - 4rem));
+        margin: 0 auto;
+      }
+
+      .label {
+        color: var(--gold);
+        font-size: 0.74rem;
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .ornament {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      .ornament::before,
+      .ornament::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+      }
+
+      .diamond {
+        width: 8px;
+        height: 8px;
+        flex: 0 0 auto;
+        background: var(--gold);
+        transform: rotate(45deg);
+      }
+
+      .hero {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        background: var(--cream);
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: -40%;
+        background:
+          radial-gradient(ellipse at 24% 18%, rgba(184, 149, 106, 0.1), transparent 46%),
+          radial-gradient(ellipse at 76% 82%, rgba(107, 45, 60, 0.08), transparent 48%);
+        pointer-events: none;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 4rem 2rem;
+      }
+
+      .hero-label {
+        margin-bottom: 2rem;
+        color: var(--gold);
+        font-size: 0.8rem;
+        font-weight: 400;
+        letter-spacing: 0.36em;
+      }
+
+      .hero h1 {
+        color: var(--ink);
+        font-size: clamp(2.35rem, 6vw, 5.4rem);
+        font-weight: 300;
+        letter-spacing: 0.08em;
+      }
+
+      .hero h1 em {
+        color: var(--burgundy);
+        font-family: var(--display);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .hero-subtitle {
+        max-width: 620px;
+        margin: 0 auto;
+        color: var(--muted);
+        font-size: 1.06rem;
+        font-weight: 300;
+        line-height: 1.95;
+      }
+
+      .hero .ornament {
+        width: min(300px, 70vw);
+        margin: 2rem auto;
+      }
+
+      .scroll-hint {
+        position: absolute;
+        left: 50%;
+        bottom: 3rem;
+        transform: translateX(-50%);
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.22em;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(8px); }
+      }
+
+      section {
+        position: relative;
+        padding: 6rem 0;
+      }
+
+      section:nth-of-type(even) {
+        background: var(--cream);
+      }
+
+      .section-header {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        margin-bottom: 4rem;
+      }
+
+      .section-number {
+        color: var(--gold);
+        font-family: var(--display);
+        font-size: clamp(4rem, 10vw, 6.4rem);
+        font-weight: 300;
+        line-height: 0.85;
+        opacity: 0.28;
+      }
+
+      .section-header-content {
+        flex: 1;
+      }
+
+      .section-header h2 {
+        margin: 0.7rem 0 1rem;
+        font-size: clamp(1.8rem, 4vw, 2.9rem);
+        font-weight: 300;
+      }
+
+      .section-header p {
+        max-width: 680px;
+        color: var(--muted);
+        font-size: 1.03rem;
+        font-weight: 300;
+      }
+
+      .quote-block {
+        margin: 3rem 0;
+        padding-left: 2rem;
+        border-left: 2px solid var(--gold);
+        color: var(--soft-ink);
+        font-family: var(--serif);
+        font-size: 1.22rem;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.95;
+      }
+
+      .magazine-table {
+        width: 100%;
+        margin: 2.5rem 0;
+        border-collapse: collapse;
+        font-size: 0.94rem;
+      }
+
+      .magazine-table th {
+        padding: 1.1rem 1.4rem;
+        border-bottom: 2px solid var(--gold);
+        color: var(--gold);
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .magazine-table td {
+        padding: 1.15rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+
+      .magazine-table tr:hover td {
+        background: rgba(184, 149, 106, 0.045);
+      }
+
+      .data-highlight {
+        color: var(--burgundy);
+        font-family: var(--display);
+        font-size: 1.25em;
+        font-weight: 600;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+      }
+
+      .magazine-card {
+        position: relative;
+        padding: 2.4rem;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+      }
+
+      .magazine-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--gold), var(--gold-light));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s var(--ease-out);
+      }
+
+      .magazine-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+      }
+
+      .magazine-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .card-number {
+        margin-bottom: 1rem;
+        color: var(--gold);
+        font-family: var(--display);
+        font-size: 3rem;
+        font-weight: 300;
+        line-height: 1;
+        opacity: 0.36;
+      }
+
+      .magazine-card h3 {
+        margin-bottom: 1rem;
+        color: var(--ink);
+        font-size: 1.28rem;
+      }
+
+      .magazine-card p {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .truth {
+        margin-top: 1.4rem;
+        color: var(--burgundy);
+        font-family: var(--serif);
+        font-style: italic;
+      }
+
+      .chapter-divider {
+        min-height: 58vh;
+        display: grid;
+        place-items: center;
+        position: relative;
+        overflow: hidden;
+        background: var(--ink);
+        color: var(--cream);
+        text-align: center;
+      }
+
+      .chapter-divider::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 50%, rgba(184, 149, 106, 0.14), transparent 70%);
+      }
+
+      .chapter-content {
+        position: relative;
+        z-index: 1;
+        padding: 2rem;
+      }
+
+      .chapter-number {
+        margin-bottom: -2rem;
+        color: var(--gold);
+        font-family: var(--display);
+        font-size: clamp(5rem, 13vw, 8.5rem);
+        font-weight: 300;
+        line-height: 1;
+        opacity: 0.22;
+      }
+
+      .chapter-divider h2 {
+        font-size: clamp(2rem, 5vw, 3.6rem);
+        font-weight: 300;
+        letter-spacing: 0.1em;
+      }
+
+      .chapter-divider p {
+        margin-top: 1rem;
+        color: var(--gold-light);
+        letter-spacing: 0.06em;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 2.5rem 0;
+        border: 1px solid var(--border);
+      }
+
+      .comparison-header {
+        padding: 1.4rem 1.5rem;
+        border-bottom: 2px solid var(--gold);
+        background: var(--cream);
+        color: var(--gold);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .comparison-cell {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--soft-ink);
+        font-size: 0.94rem;
+      }
+
+      .comparison-cell strong {
+        color: var(--ink);
+        font-family: var(--serif);
+      }
+
+      .layer-stack {
+        max-width: 760px;
+        margin: 3rem auto;
+      }
+
+      .layer-item {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 1.8rem 2.2rem;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: border-color 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+      }
+
+      .layer-item:hover {
+        border-color: var(--gold-light);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.045);
+      }
+
+      .layer-num {
+        min-width: 3rem;
+        color: var(--gold);
+        font-family: var(--display);
+        font-size: 2rem;
+        font-weight: 300;
+      }
+
+      .layer-text h4 {
+        margin-bottom: 0.3rem;
+        font-size: 1.08rem;
+      }
+
+      .layer-text p {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .scenario {
+        position: relative;
+        margin: 3rem 0;
+        padding: 3rem;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .scenario::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 4px;
+        background: linear-gradient(180deg, var(--gold), var(--gold-light));
+      }
+
+      .scenario-header {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .scenario-tag {
+        padding: 0.3rem 0.8rem;
+        border: 1px solid var(--gold-light);
+        color: var(--gold);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .scenario h3 {
+        font-size: 1.36rem;
+      }
+
+      .scenario ul {
+        list-style: none;
+      }
+
+      .scenario li {
+        position: relative;
+        padding: 0.55rem 0 0.55rem 1.5rem;
+        color: var(--soft-ink);
+      }
+
+      .scenario li::before {
+        content: "";
+        position: absolute;
+        top: 1.18rem;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--gold);
+      }
+
+      .scenario-result {
+        margin-top: 1.4rem;
+        padding: 1.15rem 1.5rem;
+        border-left: 2px solid var(--gold);
+        background: rgba(184, 149, 106, 0.07);
+        color: var(--soft-ink);
+        font-family: var(--serif);
+        font-style: italic;
+      }
+
+      .skill-section {
+        margin: 3rem 0;
+      }
+
+      .skill-section-title {
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--burgundy);
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .skill-table {
+        width: 100%;
+        margin-bottom: 2rem;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      .skill-table th {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--gold-light);
+        color: var(--gold);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.13em;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .skill-table td {
+        padding: 0.82rem 1rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+
+      .skill-table tr:hover td {
+        background: rgba(184, 149, 106, 0.035);
+      }
+
+      .skill-id {
+        color: var(--gold-dark);
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .deployment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem;
+      }
+
+      .deployment-card {
+        position: relative;
+        padding: 2.2rem;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .deployment-card.featured {
+        border-color: var(--gold);
+        box-shadow: 0 14px 42px rgba(184, 149, 106, 0.11);
+      }
+
+      .deployment-card.featured::before {
+        content: "推荐先试";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 0.32rem 1rem;
+        background: var(--gold);
+        color: var(--cream);
+        font-size: 0.65rem;
+        letter-spacing: 0.14em;
+      }
+
+      .deployment-name {
+        font-family: var(--serif);
+        font-size: 1.26rem;
+        font-weight: 600;
+      }
+
+      .deployment-time {
+        margin: 1rem 0;
+        color: var(--burgundy);
+        font-family: var(--display);
+        font-size: 2.35rem;
+        font-weight: 300;
+      }
+
+      .deployment-card p {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .faq-item {
+        padding: 2rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .faq-question {
+        margin-bottom: 0.75rem;
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 1.13rem;
+        font-weight: 600;
+      }
+
+      .faq-answer {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      footer {
+        padding: 3rem 2rem;
+        border-top: 1px solid var(--border);
+        background: var(--cream);
+        color: var(--muted);
+        text-align: center;
+      }
+
+      footer p {
+        font-size: 0.84rem;
+        letter-spacing: 0.05em;
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 900px) {
+        .card-grid,
+        .deployment-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .comparison-header:nth-child(2) {
+          display: none;
+        }
+
+        .comparison-cell::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 0.3rem;
+          color: var(--gold);
+          font-size: 0.68rem;
+          font-weight: 500;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .container,
+        .container-narrow {
+          width: min(100% - 2rem, 1200px);
+        }
+
+        section {
+          padding: 4rem 0;
+        }
+
+        .hero-content {
+          padding: 3rem 1rem;
+        }
+
+        .hero h1 {
+          font-size: 2.15rem;
+        }
+
+        .magazine-card,
+        .scenario,
+        .deployment-card {
+          padding: 1.6rem;
+        }
+
+        .layer-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .magazine-table,
+        .skill-table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+
+        .scroll-hint {
+          bottom: 1.5rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="hero" id="top">
+      <div class="hero-content">
+        <div class="hero-label">方案手册 · 2026</div>
+        <h1>运动营养<br><em>AI 超级蓝海洞察师</em></h1>
+        <div class="ornament"><div class="diamond"></div></div>
+        <p class="hero-subtitle">
+          你不是缺数据。你缺一个 7×24 小时不睡觉、不摸鱼、越用越聪明的「市场情报总监」。<br>
+          从趋势洞察到竞品预警，从消费者监听到渠道利润守护，让品牌提前看见蓝海。
+        </p>
+      </div>
+      <div class="scroll-hint">向下探索</div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">01</div>
+          <div class="section-header-content">
+            <div class="label">真实改变</div>
+            <h2>市场部多了一位不下线的情报总监</h2>
+            <p>它不只是整理资料，而是持续找趋势、盯竞品、听消费者、排风险、锁利润，然后把结果推送给决策者。</p>
+          </div>
+        </div>
+
+        <table class="magazine-table fade-in">
+          <thead>
+            <tr><th>之前</th><th>之后</th><th>变化</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>等行业报告、靠经验开会讨论</td>
+              <td>AI 从声量、评论、搜索、电商增速中标记蓝海</td>
+              <td><strong class="data-highlight">提前 3-6 个月卡位</strong></td>
+            </tr>
+            <tr>
+              <td>竞品新品两周后才听说</td>
+              <td>成分、定价、渠道、人群与内容策略自动拆解</td>
+              <td><strong class="data-highlight">7 天内预警</strong></td>
+            </tr>
+            <tr>
+              <td>季度调研猜消费者心思</td>
+              <td>每天扫描评论与社媒，痛点日报自动推送</td>
+              <td><strong class="data-highlight">从季度到每日</strong></td>
+            </tr>
+            <tr>
+              <td>经销商投诉后才处理乱价</td>
+              <td>全渠道价格与窜货迹象持续监控</td>
+              <td><strong class="data-highlight">提前 24h 防火</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="quote-block fade-in">
+          核心变化不是「多了一个调研工具」，而是品牌多了一位 7×24 小时在线、越用越懂市场与消费者的 AI 蓝海情报总监。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">02</div>
+          <div class="section-header-content">
+            <div class="label">行业伤口</div>
+            <h2>三个正在流血的伤口</h2>
+            <p>机会、竞品与消费者声音每天都在发生变化。真正的问题不是没有信息，而是信息散落、滞后、没有连成决策。</p>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <article class="magazine-card fade-in">
+            <div class="card-number">I</div>
+            <h3>蓝海就在眼前，你却看不见</h3>
+            <p>电竞营养、女性增肌、银发运动、认知支持正在增长。别人已经进场收割，你还在主航道里打价格战。</p>
+            <div class="ornament"><div class="diamond"></div></div>
+            <p class="truth">你不是没有机会，你是没有「看见机会的眼睛」。</p>
+          </article>
+
+          <article class="magazine-card fade-in">
+            <div class="card-number">II</div>
+            <h3>竞品动了，你不知道</h3>
+            <p>竞品上周上了新品，换了成分、调了定价、切了新人群。你两周后才知道，窗口期已经没了。</p>
+            <div class="ornament"><div class="diamond"></div></div>
+            <p class="truth">信息就是权力。慢一天，差一季。</p>
+          </article>
+
+          <article class="magazine-card fade-in">
+            <div class="card-number">III</div>
+            <h3>消费者在骂什么，你后知后觉</h3>
+            <p>「难喝」「没效果」「成分看不懂」「为什么不出便携装」每天都在评论区爆发，却没有变成产品决策。</p>
+            <div class="ornament"><div class="diamond"></div></div>
+            <p class="truth">最大的产品创新灵感，不在会议室，在消费者的抱怨里。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="chapter-divider">
+      <div class="chapter-content">
+        <div class="chapter-number">II</div>
+        <h2>不是信息员，是总监</h2>
+        <p>你布置任务，它把市场情报从头跑到尾</p>
+      </div>
+    </div>
+
+    <section>
+      <div class="container-narrow">
+        <div class="fade-in" style="text-align:center;">
+          <div class="label">本质区别</div>
+          <div class="quote-block" style="border:none; padding:0; text-align:center;">
+            <p style="font-size:1rem; color:var(--muted); margin-bottom:2rem;">以前，你养的是「信息员」：助理刷竞品、外包做调研、同事整理报告。</p>
+            <div class="ornament" style="max-width:220px; margin:0 auto;"><div class="diamond"></div></div>
+            <p style="margin-top:2rem; color:var(--ink); font-size:1.35rem; font-weight:600;">现在，你请的是「蓝海情报总监」：找趋势、盯竞品、听消费者、排风险、锁利润，然后汇报结果。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="comparison-grid fade-in">
+          <div class="comparison-header">传统调研 / 人工</div>
+          <div class="comparison-header">AI 超级蓝海洞察师</div>
+
+          <div class="comparison-cell" data-label="传统"><strong>工作模式</strong><br>你催它动，被动响应</div>
+          <div class="comparison-cell" data-label="AI"><strong>工作模式</strong><br>主动扫描，自动预警，实时推送</div>
+
+          <div class="comparison-cell" data-label="传统"><strong>输出结果</strong><br>Excel 表格与过时 PPT</div>
+          <div class="comparison-cell" data-label="AI"><strong>输出结果</strong><br>洞察报告、应对策略、风险预警</div>
+
+          <div class="comparison-cell" data-label="传统"><strong>记忆能力</strong><br>只记当前项目</div>
+          <div class="comparison-cell" data-label="AI"><strong>记忆能力</strong><br>记住历史趋势、竞品档案、市场反馈</div>
+
+          <div class="comparison-cell" data-label="传统"><strong>适合场景</strong><br>季度调研、年度复盘</div>
+          <div class="comparison-cell" data-label="AI"><strong>适合场景</strong><br>替代市场调研与竞争情报 80% 的重复性工作</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="chapter-divider">
+      <div class="chapter-content">
+        <div class="chapter-number">III</div>
+        <h2>四层闭环</h2>
+        <p>从追风口，到造风口</p>
+      </div>
+    </div>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">03</div>
+          <div class="section-header-content">
+            <div class="label">操作系统</div>
+            <h2>覆盖市场情报全链路</h2>
+            <p>这不是单点工具，而是一套从机会识别到利润守护的操作系统。</p>
+          </div>
+        </div>
+
+        <div class="layer-stack fade-in">
+          <div class="layer-item">
+            <div class="layer-num">01</div>
+            <div class="layer-text"><h4>找风口 · 趋势洞察与机会识别</h4><p>社媒舆情 24h 抓取，小众高增长机会自动标记，行业报告出来之前先嗅到风向。</p></div>
+          </div>
+          <div class="layer-item">
+            <div class="layer-num">02</div>
+            <div class="layer-text"><h4>定策略 · 竞品情报与差异化定位</h4><p>竞品新品 7 天内自动预警，拆解成分、定价、渠道、内容、人群策略，并给出错位打法。</p></div>
+          </div>
+          <div class="layer-item">
+            <div class="layer-num">03</div>
+            <div class="layer-text"><h4>排地雷 · 市场验证与风险预判</h4><p>合规预检、市场容量测算、竞争密度评估、功效宣称边界预警，进场前先算清账。</p></div>
+          </div>
+          <div class="layer-item">
+            <div class="layer-num">04</div>
+            <div class="layer-text"><h4>锁战果 · 渠道监控与利润守护</h4><p>官网、天猫、京东、抖音、拼多多、经销商全渠道价格监控，异常提前预警。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">04</div>
+          <div class="section-header-content">
+            <div class="label">场景还原</div>
+            <h2>六个真实工作场景</h2>
+            <p>它已经在替你干那些没人有空持续做、但又直接影响增长质量的工作。</p>
+          </div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景一</span><h3>每天早上 9 点，情报简报自动送达</h3></div>
+          <ul>
+            <li>趋势异动、竞品动态、消费者新痛点、渠道异常自动汇总。</li>
+            <li>从手动刷 5 个平台 1.5 小时，变成 3 分钟看完简报。</li>
+          </ul>
+          <div class="scenario-result">全天决策有数，不再靠碎片信息拼运气。</div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景二</span><h3>比竞品早 3 个月发现蓝海赛道</h3></div>
+          <ul>
+            <li>AI 从社媒声量、电商评论、搜索指数中标记「高增长 + 低供给」赛道。</li>
+            <li>女性增肌、电竞营养、银发运动、认知支持等窗口期提前锁定。</li>
+          </ul>
+          <div class="scenario-result">竞品还在开会讨论，你已经开始卡位。</div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景三</span><h3>竞品推新品，7 天内收到预警与策略</h3></div>
+          <ul>
+            <li>新品上市后自动拆解成分、定价、渠道、内容策略和目标人群。</li>
+            <li>对手打「快速恢复」，AI 建议你在「深度睡眠修复」方向错位竞争。</li>
+          </ul>
+          <div class="scenario-result">从被动应对，变成主动布局。</div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景四</span><h3>消费者在想什么，你每天都知道</h3></div>
+          <ul>
+            <li>「难喝」「没效果」「成分看不懂」「便携装」等痛点词云实时更新。</li>
+            <li>产品创新灵感从会议室转向真实消费者反馈。</li>
+          </ul>
+          <div class="scenario-result">需求不再靠猜，抱怨变成新品机会。</div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景五</span><h3>新赛道能不能进，AI 先算一笔账</h3></div>
+          <ul>
+            <li>中、美、欧、澳新目标市场法规限制秒级扫描。</li>
+            <li>容量、增速、竞争密度、进入门槛和宣称边界同步评估。</li>
+          </ul>
+          <div class="scenario-result">从先进场再说，变成先算清再进。</div>
+        </div>
+
+        <div class="scenario fade-in">
+          <div class="scenario-header"><span class="scenario-tag">场景六</span><h3>渠道乱价，AI 比你先知道</h3></div>
+          <ul>
+            <li>全渠道价格 7×24h 监控，促销折扣的边际利润影响提前计算。</li>
+            <li>窜货异常从经销商投诉后处理，变成提前 24 小时预警。</li>
+          </ul>
+          <div class="scenario-result">红利吃到了，利润不再从渠道缝隙流走。</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="chapter-divider">
+      <div class="chapter-content">
+        <div class="chapter-number">IV</div>
+        <h2>技术底座</h2>
+        <p>为什么它能当总监，而不只是工具</p>
+      </div>
+    </div>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">05</div>
+          <div class="section-header-content">
+            <div class="label">MetaClaw Foundation</div>
+            <h2>一套能持续执行的 Agent 底座</h2>
+            <p>多平台接入、任务引擎、分布式记忆、知识库与 Skill 编排，让市场分析方法变成可复用的系统能力。</p>
+          </div>
+        </div>
+
+        <div class="skill-section fade-in">
+          <div class="skill-section-title">市场情报能力矩阵</div>
+          <table class="skill-table">
+            <thead><tr><th>能力</th><th>在市场洞察中的体现</th><th>价值</th></tr></thead>
+            <tbody>
+              <tr><td><span class="skill-id">M-01</span> 多平台接入</td><td>飞书、钉钉、企微、微信分发简报与预警</td><td>战略看简报，产品听消费者，销售盯渠道</td></tr>
+              <tr><td><span class="skill-id">A-02</span> Agent 任务引擎</td><td>一句“监控电竞营养赛道机会”，自动扫描、分析、生成报告</td><td>任务从头跑到尾</td></tr>
+              <tr><td><span class="skill-id">K-03</span> 分布式记忆</td><td>记住历史趋势、竞品档案、市场反馈</td><td>第 10 次调研比第 1 次更准</td></tr>
+              <tr><td><span class="skill-id">S-04</span> 知识库 + Skill</td><td>金牌分析师的研判逻辑固化为 Skill</td><td>一个人的眼光变成全团队标准</td></tr>
+              <tr><td><span class="skill-id">P-05</span> 子代理并行</td><td>同时监控 10 个竞品、5 个平台、3 个新赛道</td><td>把人手瓶颈变成系统吞吐</td></tr>
+              <tr><td><span class="skill-id">O-06</span> Skill 编排引擎</td><td>134+ 行业 Skill 像乐高一样自由组合</td><td>从调研到预警形成闭环</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-number">06</div>
+          <div class="section-header-content">
+            <div class="label">部署选择</div>
+            <h2>第一次引入 AI，建议从一个场景开始</h2>
+            <p>先验证竞品监控或消费者痛点洞察，证明有效，再扩展到私有化深度定制。</p>
+          </div>
+        </div>
+
+        <div class="deployment-grid">
+          <article class="deployment-card featured fade-in">
+            <div class="deployment-name">云端 SaaS</div>
+            <div class="deployment-time">3-7 天</div>
+            <p>适合单一品牌快速验证。使用标准化市场洞察 Skill 包，由 MetaClaw 官方托管，快速跑通一个高价值场景。</p>
+          </article>
+          <article class="deployment-card fade-in">
+            <div class="deployment-name">私有化部署</div>
+            <div class="deployment-time">4-6 周</div>
+            <p>适合多品牌集团或数据敏感企业。部署在你的服务器或本地，按品牌需求深度定制 Skill 与数据流程。</p>
+          </article>
+        </div>
+
+        <div class="quote-block fade-in">
+          建议：第一次引入 AI，先上云端 SaaS 验证一个场景。验证有效，再考虑私有化深度定制。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container-narrow">
+        <div class="section-header fade-in">
+          <div class="section-number">07</div>
+          <div class="section-header-content">
+            <div class="label">FAQ</div>
+            <h2>你可能在担心的问题</h2>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <div class="faq-question">AI 会替代市场分析师吗？</div>
+          <div class="faq-answer">不会。它替代的是 80% 的重复性工作：信息收集、数据整理、报告撰写、渠道监控。真人去做战略判断、创意策划和客户沟通。</div>
+        </div>
+        <div class="faq-item fade-in">
+          <div class="faq-question">分析师会抵触吗？</div>
+          <div class="faq-answer">恰恰相反。最头疼的刷平台、整理竞品档案、写周报由 AI 承担，分析师可以专注研判和策略，新人也有 AI 带教。</div>
+        </div>
+        <div class="faq-item fade-in">
+          <div class="faq-question">数据来源可靠吗？</div>
+          <div class="faq-answer">接入主流社媒、电商平台与行业数据库，关键数据自动标注来源，可追溯、可验证。</div>
+        </div>
+        <div class="faq-item fade-in">
+          <div class="faq-question">数据安全吗？</div>
+          <div class="faq-answer">私有化部署时数据存在你自己的服务器上。云端版本采用多租户隔离与加密传输，核心商业数据建议私有化。</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>运动营养 AI 超级蓝海洞察师 · 基于 MetaClaw 技术底座</p>
+    </footer>
+
+    <script>
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add("visible");
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll(".fade-in").forEach((item) => observer.observe(item));
+    </script>
+  </body>
+</html>

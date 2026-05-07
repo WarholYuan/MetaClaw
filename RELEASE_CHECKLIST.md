@@ -219,17 +219,50 @@ scripts/install.sh
 ~/.local/bin/metaclaw-update
 ```
 
-## 9. 每次发布前自检命令
+## 9. GitHub Release assets
+
+`dist/` 是本地发布产物目录，不提交到 Git。创建 GitHub Release 时只上传这些附件：
+
+```text
+dist/README-ONECLICK.txt
+dist/install-metaclaw-oneclick.command
+dist/metaclaw-main.bundle
+dist/metaclaw-oneclick-macos-v2.tar.gz
+dist/metaclaw-oneclick-macos.tar.gz
+dist/metaclaw-oneclick-macos.zip
+```
+
+不要上传：
+
+```text
+dist/.DS_Store
+dist/*.tgz
+```
+
+上传命令：
+
+```bash
+bash scripts/upload-release-assets.sh "v$(node -p "require('./package.json').version")"
+```
+
+## 10. 每次发布前自检命令
 
 ```bash
 git status --short
 bash -n scripts/install.sh
 node --check npm/bin/metaclaw-install.js
 npm pack --dry-run
-node --test skills/web-access/tests/find-url.test.mjs
 python3 -m pytest metaclaw/metaclaw/tests -q
 bats tests/install.bats
 ```
+
+OpenCLI 可选能力验收：
+
+```bash
+opencli doctor
+```
+
+如果没有安装 OpenCLI，这一步可以跳过；正式版要求 MetaClaw 能清晰报告 OpenCLI 不可用，而不是安装失败。
 
 密钥扫描：
 
@@ -239,7 +272,7 @@ git grep -n -E 'sk-[A-Za-z0-9]{20,}|api_key"\\s*:\\s*"[^"]+|app_secret"\\s*:\\s*
 
 如果命中真实密钥，不要发布。
 
-## 10. 已知注意事项
+## 11. 已知注意事项
 
 - 当前仓库直接包含 Python 应用源码，不依赖私有 submodule。
 - 历史已经重写过，如果旧远端已有内容，推送需要 `--force`。

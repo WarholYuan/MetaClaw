@@ -20,7 +20,7 @@ https://ai.baidu.com/ai-doc/SPEECH/Gk38y8lzk
 ## 使用说明
 分两个地方配置
 
-1、对于def voiceToText(self, filename)函数中调用的百度语音识别API,中接口调用asr（参数）这个配置见CHATGPT-ON-WECHAT工程目录下的`config.json`文件和config.py文件。
+1、对于def voiceToText(self, filename)函数中调用的百度语音识别API,中接口调用asr（参数）这个配置见MetaClaw工程目录下的`config.json`文件和config.py文件。
 参数	    可需	描述
 app_id    必填	应用的APPID
 api_key  必填	应用的APIKey
