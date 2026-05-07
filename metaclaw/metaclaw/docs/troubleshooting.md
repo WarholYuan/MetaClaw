@@ -38,10 +38,11 @@ Check that the expected key is present:
 grep -E 'DEEPSEEK_API_KEY|DOUBAO_API_KEY|ARK_API_KEY|MOONSHOT_API_KEY|OPENAI_API_KEY' ~/.metaclaw/.env
 ```
 
-Then run:
+Then check the service status and logs:
 
 ```bash
-metaclaw doctor
+metaclaw status
+metaclaw logs
 ```
 
 ## Web Console Cannot Open

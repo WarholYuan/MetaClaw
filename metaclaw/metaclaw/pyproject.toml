@@ -81,7 +81,6 @@ include = [
     "cli*",
     "common*",
     "config*",
-    "doctor*",
     "models*",
     "plugins*",
     "translate*",

@@ -73,9 +73,6 @@ main() {
   info "Running config migrations"
   metaclaw upgrade --migrations-only
 
-  info "Running doctor checks"
-  metaclaw doctor
-
   cat <<EOF
 
 ${APP_NAME} upgrade complete.

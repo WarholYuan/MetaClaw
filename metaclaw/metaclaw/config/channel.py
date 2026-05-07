@@ -56,13 +56,6 @@ CHANNEL_SETTINGS = {
     "feishu_answer_card_chars": 3600,  # 飞书单张回复卡片正文最大展示字数，超出会自动分卡片发送
     "feishu_footer_card_chars": 1600,  # 飞书卡片底部工具/状态最大展示字数
     "feishu_long_answer_notice_threshold": 3600,  # 超过该长度时在卡片内提示内容较长
-    # Metadoctor 配置
-    "metadoctor_enabled": False,  # 是否启用 Metadoctor 健康守护进程
-    "metadoctor_feishu_app_id": "",  # Metadoctor 专用飞书 App ID（独立应用）
-    "metadoctor_feishu_app_secret": "",  # Metadoctor 专用飞书 App Secret
-    "metadoctor_notify_open_id": "",  # 接收告警通知的飞书用户 open_id
-    "metadoctor_check_interval": 30,  # 健康检查间隔（秒）
-    "metadoctor_auto_restart": False,  # 是否自动重启 MetaClaw（false=仅告警）
     # 钉钉配置
     "dingtalk_client_id": "",  # 钉钉机器人Client ID
     "dingtalk_client_secret": "",  # 钉钉机器人Client Secret

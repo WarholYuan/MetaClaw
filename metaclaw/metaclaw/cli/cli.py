@@ -12,7 +12,6 @@ from cli.commands.context import context
 from cli.commands.install import install_browser
 from cli.commands.knowledge import knowledge
 from cli.commands.lark import lark
-from cli.commands.doctor import doctor_group
 from common.brand import APP_NAME, CLI_NAME, DEFAULT_ENV_FILE
 from config.migrations import MigrationError, run_pending_migrations
 
@@ -33,7 +32,6 @@ Commands:
   upgrade  Upgrade {APP_NAME} to a version and restart.
   status   Show {APP_NAME} running status.
   logs     View {APP_NAME} logs.
-  doctor   Manage Metadoctor (health monitor).
   setup    Run the interactive configuration wizard.
   skill    Manage {APP_NAME} skills.
   knowledge  Manage knowledge base.
@@ -166,7 +164,6 @@ main.add_command(run)
 main.add_command(context)
 main.add_command(knowledge)
 main.add_command(lark)
-main.add_command(doctor_group)
 main.add_command(install_browser)
 main.add_command(setup)
 

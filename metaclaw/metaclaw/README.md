@@ -45,7 +45,6 @@ metaclaw run
 metaclaw start
 metaclaw status
 metaclaw logs
-metaclaw doctor status
 metaclaw upgrade
 metaclaw version
 ```

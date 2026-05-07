@@ -383,8 +383,6 @@ def load_config():
         "qq_app_id": "QQ_APP_ID",
         "qq_app_secret": "QQ_APP_SECRET",
         "weixin_token": "WEIXIN_TOKEN",
-        "metadoctor_feishu_app_id": "METADOCTOR_FEISHU_APP_ID",
-        "metadoctor_feishu_app_secret": "METADOCTOR_FEISHU_APP_SECRET",
     }
     injected = 0
     for conf_key, env_key in _CONFIG_TO_ENV.items():

@@ -30,7 +30,6 @@ metaclaw upgrade --migrations-only
 ## Verify
 
 ```bash
-metaclaw doctor
 metaclaw status
 ```
 

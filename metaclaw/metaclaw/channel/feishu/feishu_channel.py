@@ -669,7 +669,7 @@ class FeiShuChanel(ChatChannel):
                 if tool_calls and state["current"].strip():
                     state["committed"] += state["current"].strip() + "\n\n---\n\n"
                     state["current"] = ""
-                    state["status"] = "准备使用工具"
+                    state["status"] = "继续处理中"
                     state["phase"] = "tooling"
                 else:
                     state["status"] = "整理最终回复"
@@ -677,12 +677,10 @@ class FeiShuChanel(ChatChannel):
                 _push_stream(state, force=True)
             elif event_type == "tool_execution_start":
                 tool_name = data.get("tool_name", "unknown")
-                tool_label = self._format_tool_action_for_user(tool_name)
-                state["status"] = tool_label
+                state["status"] = "继续处理中"
                 state["phase"] = "tooling"
                 state["tools"].append({
                     "name": tool_name,
-                    "label": tool_label,
                     "status": "running",
                     "arguments": data.get("arguments") or {},
                     "started_at": time.time(),
@@ -696,7 +694,7 @@ class FeiShuChanel(ChatChannel):
                         tool["execution_time"] = data.get("execution_time", 0)
                         tool["result"] = data.get("result")
                         break
-                state["status"] = "工具处理完成，正在整理回复"
+                state["status"] = "正在整理回复"
                 state["phase"] = "answering"
                 _push_stream(state, force=True)
             elif event_type == "agent_end":
@@ -887,107 +885,6 @@ class FeiShuChanel(ChatChannel):
             time.sleep(0.2)
         return True
 
-    def _format_tool_args(self, args: dict) -> str:
-        if not args:
-            return ""
-        try:
-            rendered = json.dumps(args, ensure_ascii=False)
-        except Exception:
-            rendered = str(args)
-        return self._truncate_card_text(rendered, 180)
-
-    def _format_tool_name_for_user(self, tool_name: str) -> str:
-        labels = {
-            "read": "读取文件",
-            "write": "写入文件",
-            "edit": "编辑文件",
-            "bash": "执行命令",
-            "ls": "查看目录",
-            "web_search": "搜索资料",
-            "web_fetch": "读取网页",
-            "browser": "操作浏览器",
-            "memory": "查询记忆",
-            "scheduler": "处理日程任务",
-            "send": "发送文件",
-        }
-        return labels.get(tool_name, tool_name)
-
-    def _format_tool_action_for_user(self, tool_name: str) -> str:
-        labels = {
-            "read": "正在查看项目文件",
-            "open": "正在查看项目文件",
-            "write": "正在写入文件",
-            "edit": "正在修改文件",
-            "bash": "正在运行命令",
-            "exec": "正在运行命令",
-            "command": "正在运行命令",
-            "ls": "正在查看目录",
-            "grep": "正在搜索文本",
-            "glob": "正在查找文件",
-            "web_search": "正在搜索资料",
-            "web_fetch": "正在读取网页",
-            "browser": "正在操作浏览器",
-            "memory": "正在查询记忆",
-            "scheduler": "正在处理日程任务",
-            "send": "正在发送文件",
-        }
-        normalized = (tool_name or "").replace("-", "_").lower()
-        for key, label in labels.items():
-            if normalized == key or normalized.startswith(f"{key}_"):
-                return label
-        return f"正在使用工具：{tool_name or '未知工具'}"
-
-    def _redact_inline_secrets(self, text: str) -> str:
-        if not text:
-            return ""
-        redacted = re.sub(
-            r"(?i)(api[_-]?key|token|secret|password|authorization|bearer)(\s*[=:]\s*|\s+)[^\s&]+",
-            r"\1\2[已隐藏]",
-            text,
-        )
-        return self._truncate_card_text(redacted, 160)
-
-    def _extract_tool_detail_for_user(self, tool: dict) -> str:
-        args = tool.get("arguments") or {}
-        if not isinstance(args, dict):
-            return ""
-        raw_name = tool.get("name", "unknown")
-        normalized = (raw_name or "").replace("-", "_").lower()
-
-        def first_text(*keys):
-            for key in keys:
-                value = args.get(key)
-                if isinstance(value, str) and value.strip():
-                    return value.strip()
-            return ""
-
-        if normalized.startswith(("read", "open", "write", "edit")):
-            path = first_text("file_path", "path", "file")
-            return os.path.basename(path) if path else ""
-        if normalized.startswith(("ls", "glob")):
-            return first_text("path", "pattern", "glob")
-        if normalized.startswith("grep"):
-            pattern = first_text("pattern", "query", "q")
-            target = first_text("path", "glob")
-            return f"{pattern} / {target}" if pattern and target else pattern or target
-        if normalized.startswith(("bash", "exec", "command")):
-            return self._redact_inline_secrets(first_text("description", "command", "cmd", "script"))
-        if normalized.startswith("web_search"):
-            return first_text("query", "q")
-        if normalized.startswith(("web_fetch", "browser")):
-            return self._redact_inline_secrets(first_text("url", "href"))
-        return self._truncate_card_text(first_text("description", "query", "name", "target"), 160)
-
-    def _should_expand_card_details(self, state: dict, elapsed: int) -> bool:
-        if state.get("force_detail"):
-            return True
-        if state.get("tools"):
-            return True
-        if state.get("phase") in ("tooling", "error"):
-            return True
-        threshold = conf().get("feishu_detail_expand_threshold_seconds", 10)
-        return elapsed >= threshold
-
     def _format_elapsed_for_user(self, elapsed: int) -> str:
         if elapsed < 60:
             return f"{elapsed}s"
@@ -1005,8 +902,8 @@ class FeiShuChanel(ChatChannel):
             return "正在理解问题，马上给你结果。"
         if phase == "tooling":
             if elapsed >= 30:
-                return "任务较长，正在等待工具结果。"
-            return "正在调用工具处理这件事。"
+                return "任务较长，还在处理中。"
+            return "正在处理这件事。"
         if phase == "finalizing":
             return "结果已基本完成，正在整理成可读回复。"
         return "正在生成回复。"
@@ -1015,10 +912,6 @@ class FeiShuChanel(ChatChannel):
         elapsed = int(time.time() - state.get("started_at", time.time()))
         status = state.get("status") or "处理中"
         lines = [f"状态：{status} · {self._format_elapsed_for_user(elapsed)}"]
-
-        tools = state.get("tools") or []
-        if tools:
-            lines.append(f"\n{self._format_compact_tool_summary(tools)}")
 
         reasoning = self._normalize_card_markdown(state.get("reasoning", ""), 700)
         if reasoning:
@@ -1033,7 +926,7 @@ class FeiShuChanel(ChatChannel):
             answer = self._format_answer_for_card(answer)
         if answer:
             lines.append(f"\n**回复**\n{answer}")
-        elif not reasoning and not tools:
+        elif not reasoning:
             lines.append(f"\n{self._get_progress_hint(state, elapsed)}")
 
         return self._truncate_card_text("\n".join(lines), 7800)
@@ -1055,7 +948,7 @@ class FeiShuChanel(ChatChannel):
         if state.get("done") or phase == "done":
             return "回复完成", "green"
         if phase == "tooling":
-            return "正在使用工具", "grey"
+            return "正在处理", "grey"
         if phase in ("answering", "finalizing"):
             return "正在回复", "grey"
         return "正在回复", "grey"
@@ -1278,53 +1171,6 @@ class FeiShuChanel(ChatChannel):
                     elements.append(self._card_text_element(self._format_card_text_block(chunk)))
         return elements
 
-    def _format_tool_status_for_user(self, status_text: str) -> str:
-        labels = {
-            "running": "进行中",
-            "success": "完成",
-            "done": "完成",
-            "failed": "失败",
-            "error": "失败",
-        }
-        return labels.get(status_text or "", status_text or "未知")
-
-    def _format_compact_tool_summary(self, tools: list) -> str:
-        if not tools:
-            return ""
-
-        running = 0
-        done = 0
-        failed = 0
-        for tool in tools:
-            status = tool.get("status", "running")
-            if status in ("failed", "error"):
-                failed += 1
-            elif status == "running":
-                running += 1
-            else:
-                done += 1
-
-        parts = [f"{len(tools)} 项"]
-        if running:
-            parts.append(f"进行中 {running}")
-        if done:
-            parts.append(f"完成 {done}")
-        if failed:
-            parts.append(f"失败 {failed}")
-
-        active_tool = None
-        for tool in reversed(tools):
-            if tool.get("status", "running") == "running":
-                active_tool = tool
-                break
-        if active_tool is None:
-            active_tool = tools[-1]
-
-        active_name = active_tool.get("label") or self._format_tool_action_for_user(active_tool.get("name", "unknown"))
-        active_status = self._format_tool_status_for_user(active_tool.get("status", "running"))
-        current = f"当前：{active_name}" if active_status == "进行中" else f"最近：{active_name} {active_status}"
-        return f"**工具**：{' · '.join(parts)} · {current}"
-
     def _should_show_reasoning_summary(self, state: dict, elapsed: int, reasoning: str) -> bool:
         if not reasoning:
             return False
@@ -1381,12 +1227,9 @@ class FeiShuChanel(ChatChannel):
             heading="正文"
         ))
 
-        tools = state.get("tools") or []
         reasoning_limit = conf().get("feishu_reasoning_summary_chars", 260)
         reasoning = self._normalize_card_markdown(state.get("reasoning", ""), reasoning_limit)
         bottom_sections = []
-        if tools:
-            bottom_sections.append(self._format_compact_tool_summary(tools))
         meta_lines = [f"**状态**：{status} · {self._format_elapsed_for_user(elapsed)}"]
         bottom_sections.append("\n".join(meta_lines))
         if self._should_show_reasoning_summary(state, elapsed, reasoning):

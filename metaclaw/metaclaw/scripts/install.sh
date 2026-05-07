@@ -66,9 +66,7 @@ Next steps:
    DOUBAO_API_KEY=...
    MOONSHOT_API_KEY=...
    OPENAI_API_KEY=...
-2. Verify the installation:
-   metaclaw doctor
-3. Start the service:
+2. Start the service:
    metaclaw start
 EOF
 }

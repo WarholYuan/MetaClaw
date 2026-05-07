@@ -57,7 +57,6 @@ Then add the provider key to `~/.metaclaw/.env`.
 ## Verify
 
 ```bash
-metaclaw doctor
 metaclaw start
 metaclaw status
 ```

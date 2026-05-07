@@ -104,7 +104,6 @@ Recommended config values:
 ## Verify
 
 ```bash
-metaclaw doctor
 metaclaw status
 ```
 
