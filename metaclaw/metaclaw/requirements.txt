@@ -1,5 +1,5 @@
 openai>=0.27.8,<1.0  # TODO: migrate to openai>=1.0 (see openai_compat.py)
-aiohttp>=3.8.6,<3.10
+aiohttp>=3.8.6,<3.14
 requests>=2.28.2
 chardet>=5.1.0
 Pillow
