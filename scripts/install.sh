@@ -262,7 +262,7 @@ if [[ "${METACLAW_SKIP_UPDATE_CHECK:-0}" != "1" ]]; then
   fi
 fi
 
-exec bash "$INSTALL_DIR/scripts/install.sh" "$@"
+exec bash "${METACLAW_INSTALL_DIR:-$HOME/.metaclaw/src}/scripts/install.sh" "$@"
 SHIM
   chmod +x "$BIN_DIR/metaclaw-update"
   log_success "CLI commands created in $BIN_DIR"
