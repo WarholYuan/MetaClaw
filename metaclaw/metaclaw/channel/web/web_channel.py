@@ -694,11 +694,34 @@ class WebChannel(ChatChannel):
             )
         app = web.application(urls, globals(), autoreload=False)
 
-        # Log device code from cloud client requests
+        # Log and count device code from cloud client requests
+        _api_count_lock = threading.Lock()
+
+        def _api_counts_path():
+            from common.utils import expand_path
+            data_dir = expand_path(conf().get("appdata_dir", DEFAULT_APPDATA_DIR))
+            return os.path.join(data_dir, "api_counts.json")
+
         def _log_device_code():
             device_code = web.ctx.env.get("HTTP_X_DEVICE_CODE", "")
-            if device_code:
-                logger.info(f"[WebChannel] Cloud client request: {web.ctx.method} {web.ctx.path} | Device: {device_code}")
+            if not device_code:
+                return
+            path = web.ctx.path
+            logger.info(f"[WebChannel] Cloud client request: {web.ctx.method} {path} | Device: {device_code}")
+            with _api_count_lock:
+                counts = {}
+                counts_file = _api_counts_path()
+                if os.path.isfile(counts_file):
+                    try:
+                        with open(counts_file, "r") as f:
+                            counts = json.load(f)
+                    except Exception:
+                        counts = {}
+                counts[device_code] = counts.get(device_code, 0) + 1
+                os.makedirs(os.path.dirname(counts_file), exist_ok=True)
+                with open(counts_file, "w") as f:
+                    json.dump(counts, f, indent=2, ensure_ascii=False)
+                logger.info(f"[WebChannel] API count | Device: {device_code} | Total: {counts[device_code]}")
 
         app.add_processor(web.loadhook(_log_device_code))
 
