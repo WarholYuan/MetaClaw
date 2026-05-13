@@ -271,6 +271,21 @@ def run():
         # Parse channel_type into a list
         raw_channel = conf().get("channel_type", "web")
 
+        # Cloud mode: only start web channel, skip plugins and other channels
+        cloud_server_url = conf().get("cloud_server_url", "").strip()
+        if cloud_server_url:
+            from urllib.parse import urlparse
+            parsed = urlparse(cloud_server_url)
+            host = parsed.hostname or ""
+            if host not in ("127.0.0.1", "localhost", "::1", ""):
+                logger.info(f"[App] ☁️  Cloud mode detected, server: {cloud_server_url}")
+                _channel_mgr = ChannelManager()
+                _channel_mgr.cloud_mode = True
+                _channel_mgr.start(["web"], first_start=False)
+                while True:
+                    time.sleep(1)
+                return
+
         if "--cmd" in sys.argv:
             channel_names = ["terminal"]
         else:

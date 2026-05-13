@@ -19,6 +19,8 @@ from channel.chat_message import ChatMessage
 from collections import OrderedDict
 from common import const
 from common.brand import APP_NAME, DEFAULT_AGENT_WORKSPACE, DEFAULT_RUN_LOG_FILE, DEFAULT_WEIXIN_CREDENTIALS_PATH
+from common.device import get_device_code
+from common.cloud_client import CloudClient
 from common.log import logger
 from common.singleton import singleton
 from config import conf, get_writable_config_path
@@ -81,6 +83,27 @@ def _require_auth():
         raise web.HTTPError("401 Unauthorized",
                             {"Content-Type": "application/json; charset=utf-8"},
                             json.dumps({"status": "error", "message": "Unauthorized"}))
+
+
+def _is_cloud_mode() -> bool:
+    url = conf().get("cloud_server_url", "").strip()
+    if not url:
+        return False
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    return host not in ("127.0.0.1", "localhost", "::1", "")
+
+
+_cloud_client: CloudClient = None
+
+
+def _get_cloud_client() -> CloudClient:
+    global _cloud_client
+    if _cloud_client is None:
+        server_url = conf().get("cloud_server_url", "").strip()
+        _cloud_client = CloudClient(server_url, get_device_code())
+    return _cloud_client
 
 
 def _get_upload_dir() -> str:
@@ -597,41 +620,87 @@ class WebChannel(ChatChannel):
             os.makedirs(static_dir)
             logger.debug(f"[WebChannel] Created static directory: {static_dir}")
 
-        urls = (
-            '/', 'RootHandler',
-            '/auth/login', 'AuthLoginHandler',
-            '/auth/check', 'AuthCheckHandler',
-            '/auth/logout', 'AuthLogoutHandler',
-            '/message', 'MessageHandler',
-            '/upload', 'UploadHandler',
-            '/uploads/(.*)', 'UploadsHandler',
-            '/api/file', 'FileServeHandler',
-            '/poll', 'PollHandler',
-            '/stream', 'StreamHandler',
-            '/chat', 'ChatHandler',
-            '/config', 'ConfigHandler',
-            '/api/channels', 'ChannelsHandler',
-            '/api/weixin/qrlogin', 'WeixinQrHandler',
-            '/api/tools', 'ToolsHandler',
-            '/api/skills', 'SkillsHandler',
-            '/api/memory', 'MemoryHandler',
-            '/api/memory/content', 'MemoryContentHandler',
-            '/api/knowledge/list', 'KnowledgeListHandler',
-            '/api/knowledge/read', 'KnowledgeReadHandler',
-            '/api/knowledge/graph', 'KnowledgeGraphHandler',
-            '/api/scheduler', 'SchedulerHandler',
-            '/api/sessions', 'SessionsHandler',
-            '/api/sessions/(.*)/generate_title', 'SessionTitleHandler',
-            '/api/sessions/(.*)/clear_context', 'SessionClearContextHandler',
-            '/api/sessions/(.*)', 'SessionDetailHandler',
-            '/api/history', 'HistoryHandler',
-            '/api/logs', 'LogsHandler',
-            '/api/version', 'VersionHandler',
-            '/api/feishu/users', 'FeishuUsersHandler',
-            '/api/feishu/users/(.*)', 'FeishuUserDetailHandler',
-            '/assets/(.*)', 'AssetsHandler',
-        )
+        if _is_cloud_mode():
+            logger.info(f"[WebChannel] ☁️  Cloud Mode — proxying to {conf().get('cloud_server_url')}")
+            logger.info(f"[WebChannel] 🔑  Device Code: {get_device_code()}")
+            urls = (
+                '/', 'RootHandler',
+                '/chat', 'ChatHandler',
+                '/assets/(.*)', 'AssetsHandler',
+                '/auth/login', 'CloudProxyHandler',
+                '/auth/check', 'CloudProxyHandler',
+                '/auth/logout', 'CloudProxyHandler',
+                '/message', 'CloudProxyHandler',
+                '/upload', 'CloudProxyHandler',
+                '/uploads/(.*)', 'CloudProxyHandler',
+                '/api/file', 'CloudProxyHandler',
+                '/poll', 'CloudProxyHandler',
+                '/stream', 'CloudProxyHandler',
+                '/config', 'CloudProxyHandler',
+                '/api/channels', 'CloudProxyHandler',
+                '/api/weixin/qrlogin', 'CloudProxyHandler',
+                '/api/tools', 'CloudProxyHandler',
+                '/api/skills', 'CloudProxyHandler',
+                '/api/memory', 'CloudProxyHandler',
+                '/api/memory/content', 'CloudProxyHandler',
+                '/api/knowledge/list', 'CloudProxyHandler',
+                '/api/knowledge/read', 'CloudProxyHandler',
+                '/api/knowledge/graph', 'CloudProxyHandler',
+                '/api/scheduler', 'CloudProxyHandler',
+                '/api/sessions', 'CloudProxyHandler',
+                '/api/sessions/(.*)/generate_title', 'CloudProxyHandler',
+                '/api/sessions/(.*)/clear_context', 'CloudProxyHandler',
+                '/api/sessions/(.*)', 'CloudProxyHandler',
+                '/api/history', 'CloudProxyHandler',
+                '/api/logs', 'CloudProxyHandler',
+                '/api/version', 'CloudProxyHandler',
+                '/api/feishu/users', 'CloudProxyHandler',
+                '/api/feishu/users/(.*)', 'CloudProxyHandler',
+            )
+        else:
+            urls = (
+                '/', 'RootHandler',
+                '/auth/login', 'AuthLoginHandler',
+                '/auth/check', 'AuthCheckHandler',
+                '/auth/logout', 'AuthLogoutHandler',
+                '/message', 'MessageHandler',
+                '/upload', 'UploadHandler',
+                '/uploads/(.*)', 'UploadsHandler',
+                '/api/file', 'FileServeHandler',
+                '/poll', 'PollHandler',
+                '/stream', 'StreamHandler',
+                '/chat', 'ChatHandler',
+                '/config', 'ConfigHandler',
+                '/api/channels', 'ChannelsHandler',
+                '/api/weixin/qrlogin', 'WeixinQrHandler',
+                '/api/tools', 'ToolsHandler',
+                '/api/skills', 'SkillsHandler',
+                '/api/memory', 'MemoryHandler',
+                '/api/memory/content', 'MemoryContentHandler',
+                '/api/knowledge/list', 'KnowledgeListHandler',
+                '/api/knowledge/read', 'KnowledgeReadHandler',
+                '/api/knowledge/graph', 'KnowledgeGraphHandler',
+                '/api/scheduler', 'SchedulerHandler',
+                '/api/sessions', 'SessionsHandler',
+                '/api/sessions/(.*)/generate_title', 'SessionTitleHandler',
+                '/api/sessions/(.*)/clear_context', 'SessionClearContextHandler',
+                '/api/sessions/(.*)', 'SessionDetailHandler',
+                '/api/history', 'HistoryHandler',
+                '/api/logs', 'LogsHandler',
+                '/api/version', 'VersionHandler',
+                '/api/feishu/users', 'FeishuUsersHandler',
+                '/api/feishu/users/(.*)', 'FeishuUserDetailHandler',
+                '/assets/(.*)', 'AssetsHandler',
+            )
         app = web.application(urls, globals(), autoreload=False)
+
+        # Log device code from cloud client requests
+        def _log_device_code():
+            device_code = web.ctx.env.get("HTTP_X_DEVICE_CODE", "")
+            if device_code:
+                logger.info(f"[WebChannel] Cloud client request: {web.ctx.method} {web.ctx.path} | Device: {device_code}")
+
+        app.add_processor(web.loadhook(_log_device_code))
 
         # 完全禁用web.py的HTTP日志输出
         web.httpserver.LogMiddleware.log = lambda self, status, environ: None
@@ -1917,6 +1986,76 @@ class AssetsHandler:
         except Exception as e:
             logger.error(f"Error serving static file: {e}", exc_info=True)  # 添加更详细的错误信息
             raise web.notfound()
+
+
+class CloudProxyHandler:
+    """Proxy handler that forwards requests to the cloud MetaClaw server."""
+
+    STREAM_PATHS = {"/stream", "/api/logs"}
+
+    def _forward(self):
+        web.header('Access-Control-Allow-Origin', '*')
+        client = _get_cloud_client()
+        method = web.ctx.method
+        path = web.ctx.path
+        query = web.ctx.query or ""
+        full_path = path + query if query else path
+
+        fwd_headers = {}
+        ct = web.ctx.env.get("CONTENT_TYPE")
+        if ct:
+            fwd_headers["Content-Type"] = ct
+        cookie = web.cookies()
+        auth_token = cookie.get("metaclaw_auth_token")
+        if auth_token:
+            fwd_headers["Cookie"] = f"metaclaw_auth_token={auth_token}"
+
+        body = web.data() if method in ("POST", "PUT", "PATCH") else b""
+
+        if full_path.split("?")[0] in self.STREAM_PATHS:
+            return self._forward_stream(client, method, full_path, fwd_headers, body)
+
+        try:
+            resp = client.request(method, full_path, fwd_headers, body)
+        except Exception:
+            web.ctx.status = "502 Bad Gateway"
+            web.header('Content-Type', 'application/json; charset=utf-8')
+            return json.dumps({"status": "error", "message": "无法连接到云服务器"})
+
+        web.ctx.status = f"{resp.status_code} {resp.reason}"
+        for key, value in resp.headers.items():
+            if key.lower() not in ("transfer-encoding", "connection", "content-length"):
+                web.header(key, value)
+        return resp.content
+
+    def _forward_stream(self, client, method, path, headers, body):
+        web.header('Content-Type', 'text/event-stream; charset=utf-8')
+        web.header('Cache-Control', 'no-cache')
+        web.header('X-Accel-Buffering', 'no')
+        try:
+            chunks = client.stream(method, path, headers, body)
+        except Exception:
+            web.ctx.status = "502 Bad Gateway"
+            err = json.dumps({"type": "error", "message": "无法连接到云服务器"}, ensure_ascii=False)
+            return f"data: {err}\n\n".encode("utf-8")
+
+        def generate():
+            for chunk in chunks:
+                yield chunk
+
+        return generate()
+
+    def GET(self, *args):
+        return self._forward()
+
+    def POST(self, *args):
+        return self._forward()
+
+    def PUT(self, *args):
+        return self._forward()
+
+    def DELETE(self, *args):
+        return self._forward()
 
 
 class KnowledgeListHandler:

@@ -24,6 +24,7 @@ BIN_DIR="${METACLAW_BIN_DIR:-$HOME/.local/bin}"
 INSTALL_BROWSER="${METACLAW_INSTALL_BROWSER:-0}"
 DEV_INSTALL="${METACLAW_DEV_INSTALL:-0}"
 CREATE_SHIMS="${METACLAW_CREATE_SHIMS:-1}"
+CLOUD_SERVER_URL="${METACLAW_CLOUD_SERVER_URL:-}"
 
 # Error handling
 cleanup_on_error() {
@@ -58,12 +59,14 @@ Options:
   --browser           Install browser tool after CLI installation
   --dev               Install Python package with dev extras
   --no-shims          Do not create shell command shims
+  --cloud-server-url URL   Cloud server URL for client mode (writes to config)
   -h, --help          Show this help
 
 Environment overrides:
   METACLAW_REPO_URL, METACLAW_BRANCH, METACLAW_INSTALL_DIR,
   METACLAW_WORKSPACE_DIR, METACLAW_VENV_DIR, METACLAW_BIN_DIR,
-  METACLAW_INSTALL_BROWSER, METACLAW_DEV_INSTALL, METACLAW_CREATE_SHIMS
+  METACLAW_INSTALL_BROWSER, METACLAW_DEV_INSTALL, METACLAW_CREATE_SHIMS,
+  METACLAW_CLOUD_SERVER_URL
 USAGE
 }
 
@@ -78,6 +81,7 @@ while [[ $# -gt 0 ]]; do
     --browser) INSTALL_BROWSER=1; shift ;;
     --dev) DEV_INSTALL=1; shift ;;
     --no-shims) CREATE_SHIMS=0; shift ;;
+    --cloud-server-url) CLOUD_SERVER_URL="${2:?--cloud-server-url requires a URL}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -183,12 +187,13 @@ fi
 export METACLAW_CONFIG_FILE="$CONFIG_FILE"
 
 log_info "Setting runtime workspace in config..."
-CONFIG_FILE="$CONFIG_FILE" WORKSPACE_DIR="$WORKSPACE_DIR" python - <<'PY'
+CONFIG_FILE="$CONFIG_FILE" WORKSPACE_DIR="$WORKSPACE_DIR" CLOUD_SERVER_URL="$CLOUD_SERVER_URL" python - <<'PY'
 import json
 import os
 
 config_file = os.environ["CONFIG_FILE"]
 workspace_dir = os.environ["WORKSPACE_DIR"]
+cloud_server_url = os.environ.get("CLOUD_SERVER_URL", "")
 
 with open(config_file, "r", encoding="utf-8") as f:
     config = json.load(f)
@@ -196,6 +201,8 @@ with open(config_file, "r", encoding="utf-8") as f:
 config["agent_workspace"] = workspace_dir
 config["appdata_dir"] = os.path.join(workspace_dir, "data")
 config["service_log_file"] = os.path.join(workspace_dir, "logs", "nohup.out")
+if cloud_server_url:
+    config["cloud_server_url"] = cloud_server_url
 
 with open(config_file, "w", encoding="utf-8") as f:
     json.dump(config, f, indent=4, ensure_ascii=False)
@@ -228,6 +235,7 @@ write_install_env() {
   write_install_env_var METACLAW_INSTALL_BROWSER "$INSTALL_BROWSER"
   write_install_env_var METACLAW_DEV_INSTALL "$DEV_INSTALL"
   write_install_env_var METACLAW_CREATE_SHIMS "$CREATE_SHIMS"
+  write_install_env_var METACLAW_CLOUD_SERVER_URL "$CLOUD_SERVER_URL"
 }
 write_install_env
 log_success "Settings saved"

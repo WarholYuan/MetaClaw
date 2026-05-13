@@ -87,4 +87,5 @@ CHANNEL_SETTINGS = {
     "web_port": 9899,
     "web_password": "",  # Web console password; empty means no authentication required
     "web_session_expire_days": 30,  # Auth session expiry in days
+    "cloud_server_url": "",  # 云服务端地址，非空时自动进入 cloud_mode，API 请求转发到该地址
 }
