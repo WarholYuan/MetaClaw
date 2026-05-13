@@ -23,7 +23,7 @@ from common.device import get_device_code
 from common.cloud_client import CloudClient
 from common.log import logger
 from common.singleton import singleton
-from config import conf, get_writable_config_path
+from config import conf, get_writable_config_path, get_appdata_dir
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".avi", ".mov", ".mkv"}
@@ -698,9 +698,7 @@ class WebChannel(ChatChannel):
         _api_count_lock = threading.Lock()
 
         def _api_counts_path():
-            from common.utils import expand_path
-            data_dir = expand_path(conf().get("appdata_dir", DEFAULT_APPDATA_DIR))
-            return os.path.join(data_dir, "api_counts.json")
+            return os.path.join(get_appdata_dir(), "api_counts.json")
 
         def _log_device_code():
             device_code = web.ctx.env.get("HTTP_X_DEVICE_CODE", "")
