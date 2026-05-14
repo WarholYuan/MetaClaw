@@ -2,6 +2,7 @@
 Read tool - Read file contents
 Supports text files, images (jpg, png, gif, webp), and PDF files
 """
+from __future__ import annotations
 
 import os
 from typing import Dict, Any

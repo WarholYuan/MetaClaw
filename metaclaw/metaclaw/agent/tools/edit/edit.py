@@ -2,6 +2,7 @@
 Edit tool - Precise file editing
 Edit files through exact text replacement
 """
+from __future__ import annotations
 
 import os
 from typing import Dict, Any

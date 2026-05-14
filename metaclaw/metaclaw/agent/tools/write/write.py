@@ -2,6 +2,7 @@
 Write tool - Write file content
 Creates or overwrites files, automatically creates parent directories
 """
+from __future__ import annotations
 
 import os
 from typing import Dict, Any
