@@ -197,7 +197,7 @@ class MemoryManager:
         
         # Generate path if not provided
         if not path:
-            content_hash = hashlib.md5(content.encode('utf-8'), usedforsecurity=False).hexdigest()[:8]
+            content_hash = hashlib.md5(content.encode('utf-8')).hexdigest()[:8]
             if user_id and scope == "user":
                 path = f"memory/users/{user_id}/memory_{content_hash}.md"
             else:
@@ -435,7 +435,7 @@ class MemoryManager:
     def _generate_chunk_id(self, path: str, start_line: int, end_line: int) -> str:
         """Generate unique chunk ID"""
         content = f"{path}:{start_line}:{end_line}"
-        return hashlib.md5(content.encode('utf-8'), usedforsecurity=False).hexdigest()
+        return hashlib.md5(content.encode('utf-8')).hexdigest()
     
     @staticmethod
     def _compute_temporal_decay(path: str, half_life_days: float = 30.0) -> float:

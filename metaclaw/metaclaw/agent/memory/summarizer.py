@@ -181,7 +181,7 @@ class MemoryFlushManager:
                 text = self._extract_text_from_content(m.get("content", ""))
                 if not text or not text.strip():
                     continue
-                h = hashlib.md5(text.encode("utf-8"), usedforsecurity=False).hexdigest()
+                h = hashlib.md5(text.encode("utf-8")).hexdigest()
                 if h not in self._trim_flushed_hashes:
                     self._trim_flushed_hashes.add(h)
                     deduped.append(m)
@@ -287,7 +287,7 @@ class MemoryFlushManager:
             self._extract_text_from_content(m.get("content", ""))
             for m in messages
         )
-        content_hash = hashlib.md5(content.encode("utf-8"), usedforsecurity=False).hexdigest()
+        content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()
         if content_hash == self._last_flushed_content_hash:
             logger.debug("[MemoryFlush] Daily summary skipped: no new content since last flush")
             return False
@@ -325,7 +325,7 @@ class MemoryFlushManager:
 
         # Dedup: skip if input materials haven't changed since last dream
         import hashlib
-        input_hash = hashlib.md5((memory_content + daily_content).encode("utf-8"), usedforsecurity=False).hexdigest()
+        input_hash = hashlib.md5((memory_content + daily_content).encode("utf-8")).hexdigest()
         if not force and input_hash == self._last_dream_input_hash:
             logger.debug("[DeepDream] Input unchanged since last dream, skipping")
             return False

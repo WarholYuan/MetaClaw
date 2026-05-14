@@ -146,7 +146,7 @@ class AgentStreamExecutor:
         import hashlib
         # Sort keys for consistent hashing
         args_str = json.dumps(args, sort_keys=True, ensure_ascii=False)
-        return hashlib.md5(args_str.encode(), usedforsecurity=False).hexdigest()[:8]
+        return hashlib.md5(args_str.encode()).hexdigest()[:8]
     
     def _check_consecutive_failures(self, tool_name: str, args: dict) -> Tuple[bool, str, bool]:
         """

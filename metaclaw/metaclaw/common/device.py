@@ -11,6 +11,16 @@ from common.brand import DEFAULT_ENV_DIR
 DEVICE_ID_FILE = os.path.expanduser(f"{DEFAULT_ENV_DIR}/device_id")
 
 
+def _sha256(data: str) -> str:
+    try:
+        return hashlib.sha256(data.encode()).hexdigest()
+    except TypeError:
+        # Python 3.8 on some systems with FIPS mode
+        h = hashlib.new('sha256')
+        h.update(data.encode())
+        return h.hexdigest()
+
+
 def _read_cpu_serial() -> str:
     system = platform.system()
     try:
@@ -43,9 +53,9 @@ def _read_cpu_serial() -> str:
 def _generate_device_code() -> str:
     serial = _read_cpu_serial()
     if serial:
-        return hashlib.sha256(serial.encode()).hexdigest()[:32]
+        return _sha256(serial)[:32]
     host_id = f"{uuid.getnode()}-{platform.node()}"
-    return hashlib.sha256(host_id.encode()).hexdigest()[:32]
+    return _sha256(host_id)[:32]
 
 
 def get_device_code() -> str:

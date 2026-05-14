@@ -127,7 +127,7 @@ class EmbeddingCache:
     def _compute_key(text: str, provider: str, model: str) -> str:
         """Compute cache key"""
         content = f"{provider}:{model}:{text}"
-        return hashlib.md5(content.encode('utf-8'), usedforsecurity=False).hexdigest()
+        return hashlib.md5(content.encode('utf-8')).hexdigest()
     
     def clear(self):
         """Clear cache"""
