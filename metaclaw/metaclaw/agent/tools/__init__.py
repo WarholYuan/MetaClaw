@@ -87,6 +87,15 @@ def _import_optional_tools():
     except Exception as e:
         logger.error(f"[Tools] Vision failed to load: {e}")
 
+    # AmapNearbyPoi Tool
+    try:
+        from agent.tools.amap.amap_nearby_poi import AmapNearbyPoi
+        tools['AmapNearbyPoi'] = AmapNearbyPoi
+    except ImportError as e:
+        logger.error(f"[Tools] AmapNearbyPoi not loaded - missing dependency: {e}")
+    except Exception as e:
+        logger.error(f"[Tools] AmapNearbyPoi failed to load: {e}")
+
     return tools
 
 # Load optional tools
@@ -96,6 +105,7 @@ SchedulerTool = _optional_tools.get('SchedulerTool')
 WebSearch = _optional_tools.get('WebSearch')
 WebFetch = _optional_tools.get('WebFetch')
 Vision = _optional_tools.get('Vision')
+AmapNearbyPoi = _optional_tools.get('AmapNearbyPoi')
 GoogleSearch = _optional_tools.get('GoogleSearch')
 FileSave = _optional_tools.get('FileSave')
 Terminal = _optional_tools.get('Terminal')
@@ -153,6 +163,7 @@ __all__ = [
     'Vision',
     'BrowserTool',
     'OpenCLITool',
+    'AmapNearbyPoi',
 ]
 
 """
