@@ -65,11 +65,11 @@ class AmapNearbyPoi(BaseTool):
 
         worker_url = os.environ.get("AMAP_WORKER_URL") or conf().get("amap_worker_url", "")
         if not worker_url:
-            return ToolResult.fail("AMAP_WORKER_URL 未配置，无法使用高德周边搜索")
+            return ToolResult.fail("amap_worker_url 未配置，无法使用高德周边搜索")
 
-        worker_secret = os.environ.get("AMAP_WORKER_SECRET", "")
+        worker_secret = os.environ.get("AMAP_WORKER_SECRET") or conf().get("amap_worker_secret", "")
         if not worker_secret:
-            return ToolResult.fail("AMAP_WORKER_SECRET 未配置，无法使用高德周边搜索")
+            return ToolResult.fail("amap_worker_secret 未配置，无法使用高德周边搜索")
 
         try:
             device_code = get_device_code()

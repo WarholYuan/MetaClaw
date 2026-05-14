@@ -24,14 +24,14 @@ class TestValidation:
             with patch("agent.tools.amap.amap_nearby_poi.conf", return_value={}):
                 result = tool.execute({"address": "杭州"})
                 assert result.status == "error"
-                assert "AMAP_WORKER_URL" in result.result
+                assert "amap_worker_url" in result.result
 
     def test_missing_amap_worker_secret(self, tool):
         with patch.dict(os.environ, {"AMAP_WORKER_URL": "https://example.com"}, clear=True):
             with patch("agent.tools.amap.amap_nearby_poi.conf", return_value={"amap_worker_url": "https://example.com"}):
                 result = tool.execute({"address": "杭州"})
                 assert result.status == "error"
-                assert "AMAP_WORKER_SECRET" in result.result
+                assert "amap_worker_secret" in result.result
 
 
 class TestHappyPath:
