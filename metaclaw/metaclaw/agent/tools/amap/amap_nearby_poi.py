@@ -99,9 +99,12 @@ class AmapNearbyPoi(BaseTool):
                 headers=headers,
                 timeout=DEFAULT_TIMEOUT,
             )
+            logger.info(f"[AmapNearbyPoi] POST {worker_url}/api/amap/nearby_poi -> {resp.status_code}")
         except requests.Timeout:
+            logger.warning("[AmapNearbyPoi] request timeout")
             return ToolResult.fail("amap 服务器响应超时，请稍后再试")
         except requests.ConnectionError:
+            logger.warning(f"[AmapNearbyPoi] connection error to {worker_url}")
             return ToolResult.fail("无法连接 amap 服务器，请检查网络")
         except Exception as e:
             logger.error(f"[AmapNearbyPoi] request error: {e}", exc_info=True)
